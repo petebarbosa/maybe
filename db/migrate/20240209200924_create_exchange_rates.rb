@@ -1,6 +1,6 @@
 class CreateExchangeRates < ActiveRecord::Migration[7.2]
   def change
-    create_table :exchange_rates, id: :uuid do |t|
+    create_table :exchange_rates do |t|
       t.string :base_currency, null: false
       t.string :converted_currency, null: false
       t.decimal :rate

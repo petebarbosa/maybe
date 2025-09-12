@@ -1,6 +1,6 @@
 class CreateStockExchanges < ActiveRecord::Migration[7.2]
   def change
-    create_table :stock_exchanges, id: :uuid do |t|
+    create_table :stock_exchanges do |t|
       t.string :name, null: false
       t.string :acronym
       t.string :mic, null: false

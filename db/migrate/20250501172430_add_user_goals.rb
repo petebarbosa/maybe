@@ -1,6 +1,6 @@
 class AddUserGoals < ActiveRecord::Migration[7.2]
   def change
-    add_column :users, :goals, :text, array: true, default: []
+    add_column :users, :goals, :text, default: '[]'
     add_column :users, :set_onboarding_preferences_at, :datetime
     add_column :users, :set_onboarding_goals_at, :datetime
 

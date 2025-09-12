@@ -60,6 +60,6 @@ class UpdateSyncTimestamps < ActiveRecord::Migration[7.2]
 
     remove_column :syncs, :start_date, :date
     remove_column :syncs, :last_ran_at, :datetime
-    remove_column :syncs, :error_backtrace, :text, array: true
+    remove_column :syncs, :error_backtrace, :text
   end
 end

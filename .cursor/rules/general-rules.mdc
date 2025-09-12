@@ -11,7 +11,8 @@ alwaysApply: true
   - Read [project-design.mdc](mdc:.cursor/rules/project-design.mdc) to understand the codebase
   - Read [project-conventions.mdc](mdc:.cursor/rules/project-conventions.mdc) to understand _how_ to write code for the codebase
   - Read [ui-ux-design-guidelines.mdc](mdc:.cursor/rules/ui-ux-design-guidelines.mdc) to understand how to implement frontend code specifically
-- Ignore i18n methods and files. Hardcode strings in English for now to optimize speed of development.
+- Add both i18n methods and files for english (in en) and peruvian spanish (in es).
+- Ask for more context when needed. Always ask, it's important for understanding.
 
 ## Prohibited actions
 

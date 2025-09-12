@@ -1,8 +1,8 @@
 class CreateRejectedTransfers < ActiveRecord::Migration[7.2]
   def change
-    create_table :rejected_transfers, id: :uuid do |t|
-      t.references :inflow_transaction, null: false, foreign_key: { to_table: :account_transactions }, type: :uuid
-      t.references :outflow_transaction, null: false, foreign_key: { to_table: :account_transactions }, type: :uuid
+    create_table :rejected_transfers do |t|
+      t.references :inflow_transaction, null: false, foreign_key: { to_table: :account_transactions }
+      t.references :outflow_transaction, null: false, foreign_key: { to_table: :account_transactions }
       t.timestamps
     end
 

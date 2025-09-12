@@ -1,6 +1,6 @@
 class CreateAccountCredits < ActiveRecord::Migration[7.2]
   def change
-    create_table :account_credits, id: :uuid do |t|
+    create_table :account_credits do |t|
       t.timestamps
     end
   end

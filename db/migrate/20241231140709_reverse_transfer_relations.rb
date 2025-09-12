@@ -1,8 +1,8 @@
 class ReverseTransferRelations < ActiveRecord::Migration[7.2]
   def change
-    create_table :transfers, id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-      t.references :inflow_transaction, null: false, foreign_key: { to_table: :account_transactions }, type: :uuid
-      t.references :outflow_transaction, null: false, foreign_key: { to_table: :account_transactions }, type: :uuid
+    create_table :transfers do |t|
+      t.references :inflow_transaction, null: false, foreign_key: { to_table: :account_transactions }
+      t.references :outflow_transaction, null: false, foreign_key: { to_table: :account_transactions }
       t.string :status, null: false, default: "pending"
       t.text :notes
 
@@ -65,10 +65,10 @@ class ReverseTransferRelations < ActiveRecord::Migration[7.2]
     end
 
     remove_foreign_key :account_entries, :account_transfers, column: :transfer_id
-    remove_column :account_entries, :transfer_id, :uuid
+    remove_column :account_entries, :transfer_id, :string
     remove_column :account_entries, :marked_as_transfer, :boolean
 
-    drop_table :account_transfers, id: :uuid, default: -> { "gen_random_uuid()" } do |t|
+    drop_table :account_transfers do |t|
       t.timestamps
     end
   end

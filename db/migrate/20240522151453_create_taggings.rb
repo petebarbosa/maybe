@@ -1,8 +1,8 @@
 class CreateTaggings < ActiveRecord::Migration[7.2]
   def change
-    create_table :taggings, id: :uuid do |t|
-      t.references :tag, null: false, foreign_key: true, type: :uuid
-      t.references :taggable, polymorphic: true, type: :uuid
+    create_table :taggings do |t|
+      t.references :tag, null: false, foreign_key: true
+      t.references :taggable, polymorphic: true
       t.timestamps
     end
   end
