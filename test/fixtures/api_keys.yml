@@ -28,14 +28,12 @@ revoked_key:
   revoked_at: <%= 1.hour.ago %>
 
 one:
-  id: <%= SecureRandom.uuid %>
   user: family_admin
   name: "Test API Key"
   display_key: "test_one_key_123"
   scopes: [ "read" ]
 
 two:
-  id: <%= SecureRandom.uuid %>
   user: family_admin
   name: "Second API Key"
   display_key: "test_two_key_456"

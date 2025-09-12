@@ -24,11 +24,11 @@ class AddImportTypes < ActiveRecord::Migration[7.2]
     change_column_null :imports, :type, false
 
     # Add import references so we can associate imported resources after the import
-    add_reference :account_entries, :import, foreign_key: true, type: :uuid
-    add_reference :accounts, :import, foreign_key: true, type: :uuid
+    add_reference :account_entries, :import, foreign_key: true
+    add_reference :accounts, :import, foreign_key: true
 
-    create_table :import_rows, id: :uuid do |t|
-      t.references :import, null: false, foreign_key: true, type: :uuid
+    create_table :import_rows do |t|
+      t.references :import, null: false, foreign_key: true
       t.string :account
       t.string :date
       t.string :qty
@@ -45,13 +45,13 @@ class AddImportTypes < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    create_table :import_mappings, id: :uuid do |t|
+    create_table :import_mappings do |t|
       t.string :type, null: false
       t.string :key
       t.string :value
       t.boolean :create_when_empty, default: true
-      t.references :import, null: false, type: :uuid
-      t.references :mappable, polymorphic: true, type: :uuid
+      t.references :import, null: false
+      t.references :mappable, polymorphic: true
 
       t.timestamps
     end

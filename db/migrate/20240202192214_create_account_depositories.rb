@@ -1,6 +1,6 @@
 class CreateAccountDepositories < ActiveRecord::Migration[7.2]
   def change
-    create_table :account_depositories, id: :uuid do |t|
+    create_table :account_depositories do |t|
       t.timestamps
     end
   end

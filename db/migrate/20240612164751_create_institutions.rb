@@ -1,9 +1,9 @@
 class CreateInstitutions < ActiveRecord::Migration[7.2]
   def change
-    create_table :institutions, id: :uuid do |t|
+    create_table :institutions do |t|
       t.string :name, null: false
       t.string :logo_url
-      t.references :family, null: false, foreign_key: true, type: :uuid
+      t.references :family, null: false, foreign_key: true
 
       t.timestamps
     end

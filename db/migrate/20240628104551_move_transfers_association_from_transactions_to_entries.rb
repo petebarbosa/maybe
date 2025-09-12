@@ -2,7 +2,7 @@ class MoveTransfersAssociationFromTransactionsToEntries < ActiveRecord::Migratio
   def change
     reversible do |dir|
       dir.up do
-        add_reference :account_entries, :transfer, foreign_key: { to_table: :account_transfers }, type: :uuid
+        add_reference :account_entries, :transfer, foreign_key: { to_table: :account_transfers }
         add_column :account_entries, :marked_as_transfer, :boolean, default: false, null: false
 
         execute <<-SQL.squish
@@ -14,12 +14,12 @@ class MoveTransfersAssociationFromTransactionsToEntries < ActiveRecord::Migratio
           AND account_entries.entryable_type = 'Account::Transaction'
         SQL
 
-        remove_reference :account_transactions, :transfer, foreign_key: { to_table: :account_transfers }, type: :uuid
+        remove_reference :account_transactions, :transfer, foreign_key: { to_table: :account_transfers }, type: :string
         remove_column :account_transactions, :marked_as_transfer
       end
 
       dir.down do
-        add_reference :account_transactions, :transfer, foreign_key: { to_table: :account_transfers }, type: :uuid
+        add_reference :account_transactions, :transfer, foreign_key: { to_table: :account_transfers }
         add_column :account_transactions, :marked_as_transfer, :boolean, default: false, null: false
 
         execute <<-SQL.squish
@@ -31,7 +31,7 @@ class MoveTransfersAssociationFromTransactionsToEntries < ActiveRecord::Migratio
           AND account_entries.entryable_type = 'Account::Transaction'
         SQL
 
-        remove_reference :account_entries, :transfer, foreign_key: { to_table: :account_transfers }, type: :uuid
+        remove_reference :account_entries, :transfer, foreign_key: { to_table: :account_transfers }, type: :string
         remove_column :account_entries, :marked_as_transfer
       end
     end
