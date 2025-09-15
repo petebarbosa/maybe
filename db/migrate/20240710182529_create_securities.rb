@@ -1,6 +1,6 @@
 class CreateSecurities < ActiveRecord::Migration[7.2]
   def change
-    create_table :securities, id: :uuid do |t|
+    create_table :securities do |t|
       t.string :isin, null: false
       t.string :symbol
       t.string :name

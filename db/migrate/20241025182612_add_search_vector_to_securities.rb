@@ -1,6 +1,6 @@
 class AddSearchVectorToSecurities < ActiveRecord::Migration[7.2]
   def change
-    add_column :securities, :search_vector, :virtual, type: :tsvector, as: "setweight(to_tsvector('simple', coalesce(ticker, '')), 'B') || to_tsvector('simple', coalesce(name, ''))", stored: true
-    add_index :securities, :search_vector, using: :gin
+    # SQLite doesn't support tsvector or full-text search like PostgreSQL
+    # Skip this migration for SQLite - search can be implemented in application code
   end
 end
