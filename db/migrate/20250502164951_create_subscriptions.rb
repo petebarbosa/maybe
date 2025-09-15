@@ -1,7 +1,7 @@
 class CreateSubscriptions < ActiveRecord::Migration[7.2]
   def change
-    create_table :subscriptions, id: :uuid do |t|
-      t.references :family, null: false, foreign_key: true, type: :uuid
+    create_table :subscriptions do |t|
+      t.references :family, null: false, foreign_key: true
 
       t.string :status, null: false
 
@@ -28,11 +28,11 @@ class CreateSubscriptions < ActiveRecord::Migration[7.2]
                 ELSE COALESCE(f.stripe_subscription_status, 'incomplete')
               END,
               CASE
-                WHEN f.trial_started_at IS NOT NULL THEN f.trial_started_at + INTERVAL '14 days'
+                WHEN f.trial_started_at IS NOT NULL THEN datetime(f.trial_started_at, '+14 days')
                 ELSE NULL
               END,
-              now(),
-              now()
+              datetime('now'),
+              datetime('now')
             FROM families f
           SQL
         end

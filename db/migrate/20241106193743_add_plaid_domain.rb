@@ -1,7 +1,7 @@
 class AddPlaidDomain < ActiveRecord::Migration[7.2]
   def change
-    create_table :plaid_items, id: :uuid do |t|
-      t.references :family, null: false, type: :uuid, foreign_key: true
+    create_table :plaid_items do |t|
+      t.references :family, null: false, foreign_key: true
       t.string :access_token
       t.string :plaid_id
       t.string :name
@@ -11,8 +11,8 @@ class AddPlaidDomain < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    create_table :plaid_accounts, id: :uuid do |t|
-      t.references :plaid_item, null: false, type: :uuid, foreign_key: true
+    create_table :plaid_accounts do |t|
+      t.references :plaid_item, null: false, foreign_key: true
       t.string :plaid_id
       t.string :plaid_type
       t.string :plaid_subtype
@@ -25,13 +25,13 @@ class AddPlaidDomain < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    create_table :syncs, id: :uuid do |t|
-      t.references :syncable, polymorphic: true, null: false, type: :uuid
+    create_table :syncs do |t|
+      t.references :syncable, polymorphic: true, null: false
       t.datetime :last_ran_at
       t.date :start_date
       t.string :status, default: "pending"
       t.string :error
-      t.jsonb :data
+      t.json :data
 
       t.timestamps
     end
@@ -40,7 +40,7 @@ class AddPlaidDomain < ActiveRecord::Migration[7.2]
     add_column :families, :last_auto_synced_at, :datetime
     remove_column :accounts, :last_sync_date, :date
     remove_reference :accounts, :institution
-    add_reference :accounts, :plaid_account, type: :uuid, foreign_key: true
+    add_reference :accounts, :plaid_account, foreign_key: true
 
     add_column :account_entries, :plaid_id, :string
     add_column :accounts, :scheduled_for_deletion, :boolean, default: false

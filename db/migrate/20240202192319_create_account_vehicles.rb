@@ -1,6 +1,6 @@
 class CreateAccountVehicles < ActiveRecord::Migration[7.2]
   def change
-    create_table :account_vehicles, id: :uuid do |t|
+    create_table :account_vehicles do |t|
       t.timestamps
     end
   end

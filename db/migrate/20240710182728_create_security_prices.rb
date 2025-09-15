@@ -1,6 +1,6 @@
 class CreateSecurityPrices < ActiveRecord::Migration[7.2]
   def change
-    create_table :security_prices, id: :uuid do |t|
+    create_table :security_prices do |t|
       t.string :isin
       t.date :date
       t.decimal :price, precision: 19, scale: 4

@@ -13,13 +13,11 @@ This rule serves as high-level documentation for how you should write code for t
   - Hotwire Turbo/Stimulus for SPA-like UI/UX
   - TailwindCSS for styles
   - Lucide Icons for icons
-  - OpenAI for AI chat
-- Database: PostgreSQL
+  - Claude.ai for AI chat
+- Database: SQLite3
 - Jobs: Sidekiq + Redis
 - External
-  - Payments: Stripe
-  - User bank data syncing: Plaid 
-  - Market data: Synth (our custom API)
+ - Nothing at the moment
 
 ## Project conventions
 

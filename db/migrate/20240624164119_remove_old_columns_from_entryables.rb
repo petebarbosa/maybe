@@ -22,13 +22,13 @@ class RemoveOldColumnsFromEntryables < ActiveRecord::Migration[7.2]
         add_column :account_transactions, :date, :date
         add_column :account_transactions, :amount, :decimal, precision: 19, scale: 4
         add_column :account_transactions, :currency, :string
-        add_column :account_transactions, :account_id, :uuid
+        add_column :account_transactions, :account_id, :string
 
         # Add old columns back to Account::Valuation
         add_column :account_valuations, :date, :date
         add_column :account_valuations, :value, :decimal, precision: 19, scale: 4
         add_column :account_valuations, :currency, :string
-        add_column :account_valuations, :account_id, :uuid
+        add_column :account_valuations, :account_id, :string
 
         # Repopulate data for Account::Transaction
         execute <<-SQL.squish

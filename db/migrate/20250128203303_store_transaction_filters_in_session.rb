@@ -1,5 +1,5 @@
 class StoreTransactionFiltersInSession < ActiveRecord::Migration[7.2]
   def change
-    add_column :sessions, :prev_transaction_page_params, :jsonb, default: {}
+    add_column :sessions, :prev_transaction_page_params, :json, default: {}
   end
 end

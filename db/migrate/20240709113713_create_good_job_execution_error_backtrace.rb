@@ -10,6 +10,6 @@ class CreateGoodJobExecutionErrorBacktrace < ActiveRecord::Migration[7.2]
       end
     end
 
-    add_column :good_job_executions, :error_backtrace, :text, array: true
+    add_column :good_job_executions, :error_backtrace, :text
   end
 end

@@ -10,9 +10,9 @@ class CreateGoodJobProcessLockIds < ActiveRecord::Migration[7.2]
       end
     end
 
-    add_column :good_jobs, :locked_by_id, :uuid
+    add_column :good_jobs, :locked_by_id, :string
     add_column :good_jobs, :locked_at, :datetime
-    add_column :good_job_executions, :process_id, :uuid
+    add_column :good_job_executions, :process_id, :string
     add_column :good_job_processes, :lock_type, :integer, limit: 2
   end
 end

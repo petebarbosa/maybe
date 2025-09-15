@@ -6,7 +6,7 @@ class AddIndexesToCoreModels < ActiveRecord::Migration[7.2]
     add_index :accounts, :currency
 
     # Balances table indexes
-    add_index :balances, [ :account_id, :date ], order: { date: :desc }
+    add_index :balances, [ :account_id, :date ]
 
     # Entries table indexes
     add_index :entries, [ :account_id, :date ]

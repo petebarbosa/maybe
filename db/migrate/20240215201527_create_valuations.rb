@@ -1,8 +1,8 @@
 class CreateValuations < ActiveRecord::Migration[7.2]
   def change
-    create_table :valuations, id: :uuid do |t|
+    create_table :valuations do |t|
       t.string :type, null: false
-      t.references :account, null: false, type: :uuid, foreign_key: { on_delete: :cascade }
+      t.references :account, null: false, foreign_key: { on_delete: :cascade }
       t.date :date, null: false
       t.decimal :value, precision: 19, scale: 4, null: false
       t.string :currency, default: "USD", null: false
