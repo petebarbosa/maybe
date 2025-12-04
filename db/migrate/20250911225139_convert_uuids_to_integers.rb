@@ -12,11 +12,11 @@ class ConvertUuidsToIntegers < ActiveRecord::Migration[7.2]
     puts "2. Drop and recreate your database for a fresh start"
     puts "3. Run: rails db:create db:migrate db:seed"
     puts "4. Import your data using a custom import script"
-    
+
     return unless ENV['ENABLE_UUID_TO_INTEGER_MIGRATION'] == 'true'
-    
+
     puts "🚀 Starting UUID to Integer conversion..."
-    
+
     # This is a simplified approach - we'll drop and recreate everything
     # This is safer than trying to convert in place
     raise ActiveRecord::IrreversibleMigration, "This migration requires a fresh database. Drop and recreate your database, then run migrations."

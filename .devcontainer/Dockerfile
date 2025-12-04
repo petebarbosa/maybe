@@ -9,11 +9,11 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   git \
   imagemagick \
   iproute2 \
-  libpq-dev \
+  libsqlite3-dev \
   libyaml-dev \
   libyaml-0-2 \
   openssh-client \
-  postgresql-client \
+  sqlite3 \
   vim
 
 RUN gem install bundler

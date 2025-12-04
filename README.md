@@ -27,7 +27,7 @@ The instructions below are for developers to get started with contributing to th
 ### Requirements
 
 - See `.ruby-version` file for required Ruby version
-- PostgreSQL >9.3 (ideally, latest stable version)
+- SQLite3 (included with most systems)
 
 After cloning the repo, the basic setup commands are:
 
