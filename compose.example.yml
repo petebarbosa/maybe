@@ -39,7 +39,9 @@ x-rails-env: &rails_env
 
 services:
   web:
-    image: ghcr.io/maybe-finance/maybe:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - app-storage:/rails/storage
     ports:
@@ -54,7 +56,9 @@ services:
       - maybe_net
 
   worker:
-    image: ghcr.io/maybe-finance/maybe:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: bundle exec sidekiq
     restart: unless-stopped
     depends_on:

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_11_231818) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_30_224909) do
   create_table "accounts", force: :cascade do |t|
     t.string "subtype"
     t.integer "family_id", null: false
@@ -796,7 +796,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_11_231818) do
     t.index ["family_id"], name: "index_users_on_family_id"
     t.index ["last_viewed_chat_id"], name: "index_users_on_last_viewed_chat_id"
     t.index ["otp_secret"], name: "index_users_on_otp_secret", unique: true, where: "otp_secret IS NOT NULL"
-    t.check_constraint "role IN ('admin', 'member')", name: "check_user_role"
+    t.check_constraint "role IN ('admin', 'member', 'super_admin')", name: "check_user_role"
   end
 
   create_table "valuations", force: :cascade do |t|

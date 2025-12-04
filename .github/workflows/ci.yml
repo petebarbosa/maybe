@@ -79,20 +79,11 @@ jobs:
     env:
       PLAID_CLIENT_ID: foo
       PLAID_SECRET: bar
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432
       REDIS_URL: redis://localhost:6379
       RAILS_ENV: test
+      DATABASE_PATH: storage/test.sqlite3
 
     services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
-
       redis:
         image: redis
         ports:
@@ -101,7 +92,7 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libvips postgresql-client libpq-dev
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libvips sqlite3 libsqlite3-dev
 
       - name: Checkout code
         uses: actions/checkout@v4
