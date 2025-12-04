@@ -16,7 +16,7 @@ ARG BUILD_COMMIT_SHA
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development" \
+    BUNDLE_WITHOUT="development:test" \
     BUILD_COMMIT_SHA=${BUILD_COMMIT_SHA}
     
 # Throw-away build stage to reduce size of final image
@@ -27,7 +27,9 @@ RUN apt-get install --no-install-recommends -y build-essential libsqlite3-dev gi
 
 # Install application gems
 COPY .ruby-version Gemfile Gemfile.lock ./
-RUN bundle install
+RUN bundle config set --local frozen false && \
+    bundle lock --add-platform x86_64-linux && \
+    bundle install
 
 RUN rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
