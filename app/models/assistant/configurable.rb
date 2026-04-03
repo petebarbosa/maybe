@@ -52,7 +52,7 @@ module Assistant::Configurable
 
           #### User's preferred currency
 
-          Maybe is a multi-currency app where each user has a "preferred currency" setting.
+          Kuria is a multi-currency app where each user has a "preferred currency" setting.
 
           When no currency is specified, use the user's preferred currency for formatting and displaying monetary values.
 
