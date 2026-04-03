@@ -106,7 +106,7 @@ class UserTest < ActiveSupport::TestCase
     user = users(:family_member)
     user.setup_mfa!
 
-    totp = ROTP::TOTP.new(user.otp_secret, issuer: "Maybe")
+    totp = ROTP::TOTP.new(user.otp_secret, issuer: "Kuria")
     valid_code = totp.now
 
     assert user.verify_otp?(valid_code)
