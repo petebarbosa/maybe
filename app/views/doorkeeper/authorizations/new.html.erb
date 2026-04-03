@@ -1,14 +1,12 @@
 <% if params[:redirect_uri]&.start_with?('maybeapp://') || params[:display] == 'mobile' %>
   <meta name="turbo-visit-control" content="reload">
 <% end %>
-
 <div class="bg-container rounded-xl p-6 space-y-6">
   <div class="space-y-2 text-center">
     <p class="text-sm text-secondary">
       <%= raw t(".prompt", client_name: content_tag(:span, @pre_auth.client.name, class: "font-medium text-primary")) %>
     </p>
   </div>
-
   <% if @pre_auth.scopes.count > 0 %>
     <div class="bg-surface-inset rounded-lg p-4 space-y-3">
       <p class="text-sm font-medium text-primary"><%= t(".able_to") %>:</p>
@@ -22,7 +20,6 @@
       </ul>
     </div>
   <% end %>
-
   <div class="space-y-3">
     <% turbo_disabled = params[:redirect_uri]&.start_with?("maybeapp://") || params[:display] == "mobile" %>
     <%= form_tag oauth_authorization_path, method: :post, class: "w-full", data: { turbo: !turbo_disabled } do %>
@@ -46,7 +43,6 @@
         data: { disable_with: "Authorizing..." }
       ) %>
     <% end %>
-
     <%= form_tag oauth_authorization_path, method: :delete, class: "w-full", data: { turbo: !turbo_disabled } do %>
       <%= hidden_field_tag :client_id, @pre_auth.client.uid, id: nil %>
       <%= hidden_field_tag :redirect_uri, @pre_auth.redirect_uri, id: nil %>
@@ -69,8 +65,7 @@
       ) %>
     <% end %>
   </div>
-
   <p class="text-xs text-tertiary text-center">
-    By authorizing, you allow this app to access your Maybe data according to the permissions above.
+    By authorizing, you allow this app to access your Kuria data according to the permissions above.
   </p>
 </div>
