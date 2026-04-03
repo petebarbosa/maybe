@@ -60,7 +60,7 @@ class Family::AutoMerchantDetector
   private
     attr_reader :family, :transaction_ids
 
-    # For now, OpenAI only, but this should work with any LLM concept provider
+    # Supports any LLM concept provider
     def llm_provider
       Provider::Registry.get_provider(:opencode)
     end
