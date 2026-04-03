@@ -3,7 +3,10 @@ class Setting < RailsSettings::Base
   cache_prefix { "v1" }
 
   field :synth_api_key, type: :string, default: ENV["SYNTH_API_KEY"]
-  field :openai_access_token, type: :string, default: ENV["OPENAI_ACCESS_TOKEN"]
+  field :opencode_server_url, type: :string, default: ENV.fetch("OPENCODE_SERVER_URL", "http://opencode:4096")
+  field :opencode_server_password, type: :string, default: ENV["OPENCODE_SERVER_PASSWORD"]
+  field :opencode_default_model, type: :string, default: ENV.fetch("OPENCODE_DEFAULT_MODEL", "anthropic/claude-sonnet-4")
+  field :mcp_auth_token, type: :string, default: ENV["MCP_AUTH_TOKEN"]
 
   field :require_invite_for_signup, type: :boolean, default: false
   field :require_email_confirmation, type: :boolean, default: ENV.fetch("REQUIRE_EMAIL_CONFIRMATION", "true") == "true"
