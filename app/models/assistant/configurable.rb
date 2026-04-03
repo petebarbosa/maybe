@@ -26,7 +26,7 @@ module Assistant::Configurable
         <<~PROMPT
           ## Your identity
 
-          You are a friendly financial assistant for an open source personal finance application called "Maybe", which is short for "Maybe Finance".
+          You are a friendly financial assistant for an open source personal finance application called "Kuria".
 
           ## Your purpose
 

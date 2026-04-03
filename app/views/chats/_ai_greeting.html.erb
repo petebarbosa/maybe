@@ -1,16 +1,12 @@
 <div class="flex items-start w-full gap-3 p-2">
   <%= render "chats/ai_avatar" %>
-
   <div class="max-w-[85%] text-sm space-y-4 text-primary">
-    <p>Hey <%= Current.user&.first_name || "there" %>! I'm an AI built by Maybe to help with your finances. I have access to the web and your account data.</p>
-
+    <p>Hey <%= Current.user&.first_name || "there" %>! I'm an AI built by Kuria to help with your finances. I have access to the web and your account data.</p>
     <p>
       You can use <span class="bg-container border border-secondary px-1.5 py-0.5 rounded font-mono text-xs">/</span> to access commands
     </p>
-
     <div class="space-y-3">
       <p>Here's a few questions you can ask:</p>
-
       <% questions = [
         {
           icon: "chart-area",
@@ -25,7 +21,6 @@
           text: "Find unusual patterns"
         }
       ] %>
-
       <div class="space-y-2.5">
         <% questions.each do |question| %>
           <button data-action="chat#submitSampleQuestion"
