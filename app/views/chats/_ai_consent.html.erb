@@ -7,8 +7,8 @@
     <% if Current.user.ai_available? %>
       Kuria AI can answer financial questions and provide insights based on your data. To use this feature you'll need to explicitly enable it.
     <% else %>
-      To use the AI assistant, you need to set the <code class="bg-surface-inset px-1 py-0.5 rounded font-mono text-xs">OPENAI_ACCESS_TOKEN</code>
-      environment variable in your self-hosted instance.
+      To use the AI assistant, you need to configure the OpenCode Server connection in your
+      <%= link_to "self-hosting settings", settings_hosting_path, class: "text-primary underline" %>.
     <% end %>
   </p>
   <% if Current.user.ai_available? %>
