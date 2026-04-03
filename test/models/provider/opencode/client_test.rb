@@ -32,7 +32,7 @@ class Provider::Opencode::ClientTest < ActiveSupport::TestCase
           "info" => {
             "id" => "msg_456",
             "role" => "assistant",
-            "model" => { "providerID" => "anthropic", "modelID" => "claude-sonnet-4" },
+            "model" => { "providerID" => "qwen", "modelID" => "qwen3.6-plus-free" },
             "structured_output" => nil
           },
           "parts" => [
@@ -44,7 +44,7 @@ class Provider::Opencode::ClientTest < ActiveSupport::TestCase
 
     result = @client.send_message("sess_123",
       content: "Hello",
-      model: { providerID: "anthropic", modelID: "claude-sonnet-4" }
+      model: { providerID: "qwen", modelID: "qwen3.6-plus-free" }
     )
 
     assert_equal "msg_456", result.dig("info", "id")
@@ -102,10 +102,10 @@ class Provider::Opencode::ClientTest < ActiveSupport::TestCase
         status: 200,
         body: {
           "all" => [
-            { "id" => "anthropic", "name" => "Anthropic", "models" => [{ "id" => "claude-sonnet-4", "name" => "Claude Sonnet 4" }] }
+            { "id" => "qwen", "name" => "Qwen", "models" => [{ "id" => "qwen3.6-plus-free", "name" => "Qwen 3.6 Plus Free" }] }
           ],
-          "connected" => ["anthropic"],
-          "default" => { "anthropic" => "claude-sonnet-4" }
+          "connected" => ["qwen"],
+          "default" => { "qwen" => "qwen3.6-plus-free" }
         }.to_json,
         headers: { "Content-Type" => "application/json" }
       )
