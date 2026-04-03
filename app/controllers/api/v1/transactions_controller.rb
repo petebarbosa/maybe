@@ -245,7 +245,7 @@ end
       query.joins(:entry)
            .left_joins(:merchant)
            .where(
-             "entries.name LIKE ? OR entries.notes LIKE ? OR merchants.name LIKE ?",
+             "entries.name ILIKE ? OR entries.notes ILIKE ? OR merchants.name ILIKE ?",
              search_term, search_term, search_term
            )
 end

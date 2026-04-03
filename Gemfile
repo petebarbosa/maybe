@@ -6,7 +6,7 @@ ruby file: ".ruby-version"
 gem "rails", "~> 8.0"
 
 # Drivers
-gem "sqlite3", ">= 2.1.2"
+gem "pg", "~> 1.5"
 gem "redis", "~> 5.4"
 
 # Deployment
