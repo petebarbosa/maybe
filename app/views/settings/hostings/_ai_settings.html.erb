@@ -1,0 +1,36 @@
+<div class="space-y-4">
+  <div>
+    <h2 class="font-medium mb-1"><%= t(".title") %></h2>
+    <p class="text-secondary text-sm mb-4"><%= t(".description") %></p>
+  </div>
+  <div class="flex items-center gap-2 mb-4">
+    <div class="w-2 h-2 rounded-full <%= @ai_connected ? 'bg-green-500' : 'bg-red-500' %>"></div>
+    <span class="text-sm text-secondary">
+      <% if @ai_connected %>
+        <%= t(".connected") %>
+        <% if @ai_connected_providers.any? %>
+          &mdash; <%= t(".connected_providers", providers: @ai_connected_providers.join(", ")) %>
+        <% end %>
+      <% else %>
+        <%= t(".disconnected") %>
+      <% end %>
+    </span>
+  </div>
+  <% if @ai_connected && @ai_available_models.any? %>
+    <%= styled_form_with model: Setting.new,
+                         url: settings_hosting_path,
+                         method: :patch,
+                         data: {
+                           controller: "auto-submit-form",
+                           "auto-submit-form-trigger-event-value": "change"
+                         } do |form| %>
+      <%= form.select :opencode_default_model,
+                      options_for_select(@ai_available_models, Setting.opencode_default_model),
+                      { label: t(".model_label") },
+                      { class: "w-full rounded-lg border border-secondary bg-container text-sm py-2 px-3",
+                        data: { "auto-submit-form-target": "auto" } } %>
+    <% end %>
+  <% elsif @ai_connected %>
+    <p class="text-sm text-secondary"><%= t(".no_providers") %></p>
+  <% end %>
+</div>
