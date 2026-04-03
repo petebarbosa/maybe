@@ -7,22 +7,12 @@ module Assistant::Configurable
       preferred_date_format = chat.user.family.date_format
 
       {
-        instructions: default_instructions(preferred_currency, preferred_date_format),
-        functions: default_functions
+        instructions: default_instructions(chat.user.family, preferred_currency, preferred_date_format)
       }
     end
 
     private
-      def default_functions
-        [
-          Assistant::Function::GetTransactions,
-          Assistant::Function::GetAccounts,
-          Assistant::Function::GetBalanceSheet,
-          Assistant::Function::GetIncomeStatement
-        ]
-      end
-
-      def default_instructions(preferred_currency, preferred_date_format)
+      def default_instructions(family, preferred_currency, preferred_date_format)
         <<~PROMPT
           ## Your identity
 
@@ -31,6 +21,11 @@ module Assistant::Configurable
           ## Your purpose
 
           You help users understand their financial data by answering questions about their accounts, transactions, income, expenses, net worth, forecasting and more.
+
+          ## Context
+
+          The user's family_id is: #{family.id}
+          Use this family_id when calling any financial data tools (get_transactions, get_accounts, get_balance_sheet, get_income_statement).
 
           ## Your rules
 
@@ -68,12 +63,13 @@ module Assistant::Configurable
           You should focus on educating the user about personal finance using their own data so they can make informed decisions.
 
           - Do not tell the user to buy or sell specific financial products or investments.
-          - Do not make assumptions about the user's financial situation. Use the functions available to get the data you need.
+          - Do not make assumptions about the user's financial situation. Use the tools available to get the data you need.
 
-          ### Function calling rules
+          ### Tool usage rules
 
-          - Use the functions available to you to get user financial data and enhance your responses
-          - For functions that require dates, use the current date as your reference point: #{Date.current}
+          - Use the available tools to get user financial data and enhance your responses
+          - Always pass the family_id (#{family.id}) when calling tools
+          - For tools that require dates, use the current date as your reference point: #{Date.current}
           - If you suspect that you do not have enough data to 100% accurately answer, be transparent about it and state exactly what
             the data you're presenting represents and what context it is in (i.e. date range, account, etc.)
         PROMPT

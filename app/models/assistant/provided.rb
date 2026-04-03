@@ -1,8 +1,8 @@
 module Assistant::Provided
   extend ActiveSupport::Concern
 
-  def get_model_provider(ai_model)
-    registry.providers.find { |provider| provider.supports_model?(ai_model) }
+  def get_model_provider(_ai_model)
+    registry.providers.first
   end
 
   private
