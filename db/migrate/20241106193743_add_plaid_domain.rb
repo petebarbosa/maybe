@@ -1,7 +1,7 @@
 class AddPlaidDomain < ActiveRecord::Migration[7.2]
   def change
     create_table :plaid_items do |t|
-      t.references :family, null: false, foreign_key: true
+      t.references :family, null: false, foreign_key: true, type: :uuid
       t.string :access_token
       t.string :plaid_id
       t.string :name

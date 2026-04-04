@@ -4,8 +4,8 @@ class CreateInvitations < ActiveRecord::Migration[7.2]
       t.string :email
       t.string :role
       t.string :token
-      t.references :family, null: false, foreign_key: true
-      t.references :inviter, null: false, foreign_key: { to_table: :users }
+      t.references :family, null: false, foreign_key: true, type: :uuid
+      t.references :inviter, null: false, foreign_key: { to_table: :users }, type: :uuid
       t.datetime :accepted_at
       t.datetime :expires_at
 

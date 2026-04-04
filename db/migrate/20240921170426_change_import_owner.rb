@@ -1,6 +1,6 @@
 class ChangeImportOwner < ActiveRecord::Migration[7.2]
   def up
-    add_reference :imports, :family, foreign_key: true
+    add_reference :imports, :family, foreign_key: true, type: :uuid
     add_column :imports, :original_account_id, :string
 
     execute <<-SQL

@@ -3,7 +3,7 @@ class CreateApiKeys < ActiveRecord::Migration[7.2]
     create_table :api_keys do |t|
       t.string :key
       t.string :name
-      t.references :user, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true, type: :uuid
       t.json :scopes
       t.datetime :last_used_at
       t.datetime :expires_at
