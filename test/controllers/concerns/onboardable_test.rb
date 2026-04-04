@@ -27,4 +27,10 @@ class OnboardableTest < ActionDispatch::IntegrationTest
     get root_path
     assert_response :success
   end
+
+  test "onboarded user can visit dashboard when payments disabled and no subscription" do
+    @user.update!(onboarded_at: 1.day.ago)
+    with_payments_enabled(false) { get root_path }
+    assert_response :success
+  end
 end

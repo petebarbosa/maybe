@@ -16,6 +16,7 @@ module Family::Subscribeable
   end
 
   def upgrade_required?
+    return false unless payments_enabled?
     return false if self_hoster?
     return false if subscription&.active? || subscription&.trialing?
 
@@ -34,14 +35,17 @@ module Family::Subscribeable
   end
 
   def trialing?
+    return false unless payments_enabled?
     subscription&.trialing? && days_left_in_trial.positive?
   end
 
   def has_active_subscription?
+    return true unless payments_enabled?
     subscription&.active?
   end
 
   def needs_subscription?
+    return false unless payments_enabled?
     subscription.nil? && !self_hoster?
   end
 
@@ -77,4 +81,9 @@ module Family::Subscribeable
       subscription.update!(status: "paused")
     end
   end
+
+  private
+    def payments_enabled?
+      Rails.application.config.x.features.payments_enabled
+    end
 end
