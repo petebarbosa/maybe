@@ -10,4 +10,13 @@ class Family::SubscribeableTest < ActiveSupport::TestCase
     @family.subscription.update!(trial_ends_at: 1.day.ago, status: "trialing")
     assert_not @family.trialing?
   end
+
+  test "payments disabled treats family as active subscription" do
+    with_payments_enabled(false) do
+      assert @family.has_active_subscription?
+      assert_not @family.needs_subscription?
+      assert_not @family.upgrade_required?
+      assert_not @family.trialing?
+    end
+  end
 end
