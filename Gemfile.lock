@@ -246,9 +246,8 @@ GEM
     inline_svg (1.10.0)
       activesupport (>= 3.0)
       nokogiri (>= 1.6)
-    intercom-rails (1.0.6)
+    intercom-rails (1.0.1)
       activesupport (> 4.0)
-      jwt (~> 2.0)
     io-console (0.8.2)
     irb (1.17.0)
       pp (>= 0.6.0)
@@ -262,7 +261,7 @@ GEM
     json-schema (6.2.0)
       addressable (~> 2.8)
       bigdecimal (>= 3.1, < 5)
-    jwt (2.10.2)
+    jwt (3.1.2)
       base64
     language_server-protocol (3.17.0.5)
     launchy (3.1.1)
@@ -647,7 +646,7 @@ DEPENDENCIES
   inline_svg
   intercom-rails
   jbuilder
-  jwt (~> 2.10)
+  jwt (~> 3.1)
   letter_opener
   logtail-rails
   lookbook

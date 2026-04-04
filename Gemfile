@@ -46,7 +46,7 @@ gem "image_processing", ">= 1.2"
 # Other
 gem "ostruct"
 gem "bcrypt", "~> 3.1"
-gem "jwt", "~> 2.10"
+gem "jwt", "~> 3.1"
 gem "jbuilder"
 
 # OAuth & API Security
