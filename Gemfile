@@ -105,7 +105,7 @@ end
 group :test do
   gem "capybara"
   gem "selenium-webdriver"
-  gem "mocha", "~> 2.7"
+  gem "mocha"
   gem "vcr"
   gem "webmock"
   gem "climate_control"
