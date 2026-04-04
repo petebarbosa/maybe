@@ -68,6 +68,14 @@ module ActiveSupport
       yield
     end
 
+    def with_payments_enabled(value)
+      original = Rails.application.config.x.features.payments_enabled
+      Rails.application.config.x.features.payments_enabled = value
+      yield
+    ensure
+      Rails.application.config.x.features.payments_enabled = original
+    end
+
     def user_password_test
       "maybetestpassword817983172"
     end
