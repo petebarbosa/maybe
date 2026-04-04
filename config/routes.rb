@@ -272,6 +272,8 @@ Rails.application.routes.draw do
   get "privacy", to: redirect("https://github.com/petebarbosa/maybe")
   get "terms", to: redirect("https://github.com/petebarbosa/maybe")
 
+  post "mcp", to: "mcp#handle"
+
   # Defines the root path route ("/")
   root "pages#dashboard"
 end

@@ -26,15 +26,10 @@ threads_count = ENV.fetch("RAILS_MAX_THREADS") { 3 }
 threads threads_count, threads_count
 
 if rails_env == "production"
-  # If you are running more than 1 thread per process, the workers count
-  # should be equal to the number of processors (CPU cores) in production.
-  #
-  # It defaults to 1 because it's impossible to reliably detect how many
-  # CPU cores are available. Make sure to set the `WEB_CONCURRENCY` environment
-  # variable to match the number of processors.
-  workers_count = Integer(ENV.fetch("WEB_CONCURRENCY") { 1 })
-  workers workers_count if workers_count > 1
-
+  # MCP server requires single-process mode because the MCP Ruby SDK
+  # stores transport session state in-memory. Thread-based concurrency
+  # handles I/O-bound workloads well at personal finance app scale.
+  workers 0
   preload_app!
 end
 

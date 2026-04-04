@@ -1,54 +1,51 @@
-class Provider::Openai::AutoMerchantDetector
-  def initialize(client, transactions:, user_merchants:)
+class Provider::Opencode::AutoMerchantDetector
+  def initialize(client, transactions:, user_merchants:, model: {})
     @client = client
     @transactions = transactions
     @user_merchants = user_merchants
+    @model = model
   end
 
   def auto_detect_merchants
-    response = client.responses.create(parameters: {
-      model: "gpt-4.1-mini",
-      input: [ { role: "developer", content: developer_message } ],
-      text: {
-        format: {
-          type: "json_schema",
-          name: "auto_detect_personal_finance_merchants",
-          strict: true,
-          schema: json_schema
-        }
-      },
-      instructions: instructions
-    })
+    session = client.create_session(title: "auto-detect-merchants")
+    session_id = session["id"]
 
-    Rails.logger.info("Tokens used to auto-detect merchants: #{response.dig("usage").dig("total_tokens")}")
+    response = client.send_message(session_id,
+      content: developer_message,
+      model: model,
+      system: instructions,
+      format: {
+        type: "json_schema",
+        schema: json_schema
+      }
+    )
 
-    build_response(extract_categorizations(response))
+    structured = response.dig("info", "structured_output")
+    merchants = structured&.dig("merchants") || []
+
+    build_response(merchants)
+  ensure
+    client.delete_session(session_id) if session_id
   end
 
   private
-    attr_reader :client, :transactions, :user_merchants
+    attr_reader :client, :transactions, :user_merchants, :model
 
     AutoDetectedMerchant = Provider::LlmConcept::AutoDetectedMerchant
 
-    def build_response(categorizations)
-      categorizations.map do |categorization|
+    def build_response(merchants)
+      merchants.map do |merchant|
         AutoDetectedMerchant.new(
-          transaction_id: categorization.dig("transaction_id"),
-          business_name: normalize_ai_value(categorization.dig("business_name")),
-          business_url: normalize_ai_value(categorization.dig("business_url")),
+          transaction_id: merchant["transaction_id"],
+          business_name: normalize_value(merchant["business_name"]),
+          business_url: normalize_value(merchant["business_url"])
         )
       end
     end
 
-    def normalize_ai_value(ai_value)
-      return nil if ai_value == "null"
-
-      ai_value
-    end
-
-    def extract_categorizations(response)
-      response_json = JSON.parse(response.dig("output")[0].dig("content")[0].dig("text"))
-      response_json.dig("merchants")
+    def normalize_value(value)
+      return nil if value == "null"
+      value
     end
 
     def json_schema
@@ -67,26 +64,26 @@ class Provider::Openai::AutoMerchantDetector
                   enum: transactions.map { |t| t[:id] }
                 },
                 business_name: {
-                  type: [ "string", "null" ],
-                  description: "The detected business name of the transaction, or `null` if uncertain"
+                  type: %w[string null],
+                  description: "The detected business name, or null if uncertain"
                 },
                 business_url: {
-                  type: [ "string", "null" ],
-                  description: "The URL of the detected business, or `null` if uncertain"
+                  type: %w[string null],
+                  description: "The URL of the detected business, or null if uncertain"
                 }
               },
-              required: [ "transaction_id", "business_name", "business_url" ],
+              required: %w[transaction_id business_name business_url],
               additionalProperties: false
             }
           }
         },
-        required: [ "merchants" ],
+        required: %w[merchants],
         additionalProperties: false
       }
     end
 
     def developer_message
-      <<~MESSAGE.strip_heredoc
+      <<~MESSAGE.strip
         Here are the user's available merchants in JSON format:
 
         ```json
@@ -104,7 +101,7 @@ class Provider::Openai::AutoMerchantDetector
     end
 
     def instructions
-      <<~INSTRUCTIONS.strip_heredoc
+      <<~INSTRUCTIONS.strip
         You are an assistant to a consumer personal finance app.
 
         Closely follow ALL the rules below while auto-detecting business names and website URLs:
@@ -113,7 +110,7 @@ class Provider::Openai::AutoMerchantDetector
         - Correlate each transaction by ID (transaction_id)
         - Do not include the subdomain in the business_url (i.e. "amazon.com" not "www.amazon.com")
         - User merchants are considered "manual" user-generated merchants and should only be used in 100% clear cases
-        - Be slightly pessimistic.  We favor returning "null" over returning a false positive.
+        - Be slightly pessimistic. We favor returning "null" over returning a false positive.
         - NEVER return a name or URL for generic transaction names (e.g. "Paycheck", "Laundromat", "Grocery store", "Local diner")
 
         Determining a value:
@@ -121,26 +118,6 @@ class Provider::Openai::AutoMerchantDetector
         - First attempt to determine the name + URL from your knowledge of global businesses
         - If no certain match, attempt to match one of the user-provided merchants
         - If no match, return "null"
-
-        Example 1 (known business):
-
-        ```
-        Transaction name: "Some Amazon purchases"
-
-        Result:
-        - business_name: "Amazon"
-        - business_url: "amazon.com"
-        ```
-
-        Example 2 (generic business):
-
-        ```
-        Transaction name: "local diner"
-
-        Result:
-        - business_name: null
-        - business_url: null
-        ```
       INSTRUCTIONS
     end
 end
