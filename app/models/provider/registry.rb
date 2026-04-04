@@ -60,12 +60,11 @@ class Provider::Registry
         Provider::Github.new
       end
 
-      def openai
-        access_token = ENV.fetch("OPENAI_ACCESS_TOKEN", Setting.openai_access_token)
+      def opencode
+        url = Setting.opencode_server_url
+        return nil unless url.present?
 
-        return nil unless access_token.present?
-
-        Provider::Openai.new(access_token)
+        Provider::Opencode.new
       end
   end
 
@@ -96,9 +95,9 @@ class Provider::Registry
       when :securities
         %i[synth]
       when :llm
-        %i[openai]
+        %i[opencode]
       else
-        %i[synth plaid_us plaid_eu github openai]
+        %i[synth plaid_us plaid_eu github opencode]
       end
     end
 end
