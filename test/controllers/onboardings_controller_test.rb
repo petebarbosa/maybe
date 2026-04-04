@@ -159,11 +159,10 @@ end
   assert_redirected_to new_session_url
 end
 
-    private
-
-      def sign_out
-        @user.sessions.each do |session|
-          delete session_path(session)
-        end
-      end
+  test "trial page hides payment and subscription copy when payments disabled" do
+    sign_in users(:family_admin)
+    with_payments_enabled(false) { get trial_onboarding_url }
+    assert_response :success
+    assert_no_match(/subscription|upgrade|credit card/i, response.body)
+  end
 end

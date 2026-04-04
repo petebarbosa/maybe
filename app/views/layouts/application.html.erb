@@ -4,11 +4,9 @@
   { name: "Budgets", path: budgets_path, icon: "map", icon_custom: false, active: page_active?(budgets_path) },
   { name: "Assistant", path: chats_path, icon: "icon-assistant", icon_custom: true, active: page_active?(chats_path), mobile_only: true }
 ] %>
-
 <% desktop_nav_items = mobile_nav_items.reject { |item| item[:mobile_only] } %>
 <% expanded_sidebar_class = "w-full" %>
 <% collapsed_sidebar_class = "w-0" %>
-
 <%= render "layouts/shared/htmldoc" do %>
   <div
     class="flex flex-col lg:flex-row h-full bg-surface"
@@ -22,7 +20,6 @@
       <div class="mb-2">
         <%= icon("x", as_button: true, data: { action: "app-layout#closeMobileSidebar" }) %>
       </div>
-
       <%= render(
         "accounts/account_sidebar_tabs",
         family: Current.family,
@@ -30,18 +27,14 @@
         mobile: true
       ) %>
     </div>
-
     <%# MOBILE - Top nav %>
     <nav class="lg:hidden flex justify-between items-center p-3">
       <%= icon("panel-left", as_button: true, data: { action: "app-layout#openMobileSidebar"}) %>
-
       <%= link_to root_path, class: "block" do %>
         <%= image_tag "logomark-color.svg", class: "w-9 h-9 mx-auto" %>
       <% end %>
-
       <%= render "users/user_menu", user: Current.user, placement: "bottom-end", offset: 12 %>
     </nav>
-
     <%# DESKTOP - Left navbar %>
     <div class="hidden lg:block">
       <nav class="h-full flex flex-col shrink-0 w-[84px] py-4 mr-3">
@@ -50,7 +43,6 @@
             <%= image_tag "logomark-color.svg", class: "w-9 h-9 mx-auto" %>
           <% end %>
         </div>
-
         <ul class="space-y-0.5">
           <% desktop_nav_items.reject { |item| item[:mobile_only] }.each do |nav_item| %>
             <li>
@@ -58,19 +50,16 @@
             </li>
           <% end %>
         </ul>
-
         <div class="pl-2 mt-auto mx-auto flex flex-col gap-2">
           <%= render DS::Button.new(
             variant: "icon",
             icon: "message-circle-question",
             data: { action: "intercom#show" }
           ) %>
-
           <%= render "users/user_menu", user: Current.user %>
         </div>
       </nav>
     </div>
-
     <%# DESKTOP - Left sidebar %>
     <%= tag.div class: class_names(
         "hidden lg:block py-4 overflow-y-auto shrink-0 max-w-[320px] transition-all duration-300",
@@ -84,21 +73,18 @@
           <div class="overflow-y-auto grow">
             <%= render "accounts/account_sidebar_tabs", family: Current.family, active_tab: @account_group_tab %>
           </div>
-
-          <% if Current.family.trialing? && !self_hosted? %>
+          <% if payments_enabled? && Current.family.trialing? && !self_hosted? %>
             <div class="px-4 py-3 space-y-4 bg-container shadow-border-xs rounded-xl">
               <div class="flex items-start justify-between">
                 <div>
                   <p class="text-sm font-medium text-primary">Free trial</p>
                   <p class="text-sm text-secondary"><%= Current.family.days_left_in_trial %> days remaining</p>
                 </div>
-
                 <%= render DS::Link.new(
                   text: "Upgrade",
                   href: upgrade_subscription_path,
                 ) %>
               </div>
-
               <div class="flex items-center gap-0.5 h-1.5">
                 <div class="h-full bg-warning rounded-full" style="width: <%= Current.family.percentage_of_trial_completed %>%"></div>
                 <div class="h-full bg-surface-inset rounded-full" style="width: <%= Current.family.percentage_of_trial_remaining %>%"></div>
@@ -108,13 +94,11 @@
         </div>
       <% end %>
     <% end %>
-
     <%# SHARED - Main content %>
     <%= tag.main class: class_names("grow overflow-y-auto px-3 lg:px-10 py-4 w-full mx-auto max-w-5xl"), data: { app_layout_target: "content" } do %>
       <div class="hidden lg:flex gap-2 items-center justify-between mb-6">
         <div class="flex items-center gap-2">
           <%= icon("panel-left", as_button: true, data: { action: "app-layout#toggleLeftSidebar" }) %>
-
           <% if content_for?(:breadcrumbs) %>
             <%= yield :breadcrumbs %>
           <% else %>
@@ -123,14 +107,11 @@
         </div>
         <%= icon("panel-right", as_button: true, data: { action: "app-layout#toggleRightSidebar" }) %>
       </div>
-
       <% if content_for?(:page_header) %>
         <%= yield :page_header %>
       <% end %>
-
       <%= yield %>
     <% end %>
-
     <%# DESKTOP - Right sidebar %>
     <%= tag.div class: class_names(
           "hidden lg:block h-full overflow-y-auto shrink-0 max-w-[400px] transition-all duration-300",
@@ -145,7 +126,6 @@
             </div>
           <% end %>
         </div>
-
         <% unless Current.user.ai_enabled? %>
           <div class="absolute backdrop-blur-lg inset-0 h-full w-full flex flex-col justify-center items-center pl-0.5 pr-4">
             <%= render "chats/ai_consent" %>
@@ -153,7 +133,6 @@
         <% end %>
       <% end %>
     <% end %>
-
     <%# MOBILE - Bottom Nav %>
     <%= tag.nav class: "lg:hidden bg-surface shrink-0 z-10 pb-[env(safe-area-inset-bottom)] border-t border-tertiary flex justify-around" do %>
       <% mobile_nav_items.each do |nav_item| %>
