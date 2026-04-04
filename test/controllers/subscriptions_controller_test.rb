@@ -16,6 +16,13 @@ class SubscriptionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
+  test "all subscription endpoints disabled when payments disabled" do
+    with_payments_enabled(false) do
+      get upgrade_subscription_path
+      assert_response :forbidden
+    end
+  end
+
   # Trial subscriptions are managed internally and do NOT go through Stripe
   test "can create trial subscription" do
     @family.subscription.destroy
