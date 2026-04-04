@@ -46,7 +46,7 @@ gem "image_processing", ">= 1.2"
 # Other
 gem "ostruct"
 gem "bcrypt", "~> 3.1"
-gem "jwt"
+gem "jwt", "~> 2.10"
 gem "jbuilder"
 
 # OAuth & API Security
@@ -57,7 +57,7 @@ gem "faraday-retry"
 gem "faraday-multipart"
 gem "inline_svg"
 gem "octokit"
-gem "pagy"
+gem "pagy", "~> 9.4"
 gem "rails-settings-cached"
 gem "tzinfo-data", platforms: %i[windows jruby]
 gem "csv"
@@ -79,7 +79,7 @@ gem "mcp"
 
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
-  gem "brakeman", require: false
+  gem "brakeman", "~> 7.1", require: false
   gem "rubocop-rails-omakase", require: false
   gem "i18n-tasks"
   gem "erb_lint"
@@ -105,7 +105,7 @@ end
 group :test do
   gem "capybara"
   gem "selenium-webdriver"
-  gem "mocha"
+  gem "mocha", "~> 2.7"
   gem "vcr"
   gem "webmock"
   gem "climate_control"
