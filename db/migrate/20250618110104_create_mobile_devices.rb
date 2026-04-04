@@ -1,7 +1,7 @@
 class CreateMobileDevices < ActiveRecord::Migration[7.2]
   def change
     create_table :mobile_devices do |t|
-      t.references :user, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true, type: :uuid
       t.string :device_id
       t.string :device_name
       t.string :device_type

@@ -1,7 +1,7 @@
 class CreateAiChats < ActiveRecord::Migration[7.2]
   def change
     create_table :chats do |t|
-      t.references :user, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true, type: :uuid
       t.string :title, null: false
       t.string :instructions
       t.json :error

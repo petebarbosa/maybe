@@ -3,7 +3,7 @@ class CreateInstitutions < ActiveRecord::Migration[7.2]
     create_table :institutions do |t|
       t.string :name, null: false
       t.string :logo_url
-      t.references :family, null: false, foreign_key: true
+      t.references :family, null: false, foreign_key: true, type: :uuid
 
       t.timestamps
     end

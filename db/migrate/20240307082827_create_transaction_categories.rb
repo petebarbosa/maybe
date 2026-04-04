@@ -4,7 +4,7 @@ class CreateTransactionCategories < ActiveRecord::Migration[7.2]
       t.string "name", null: false
       t.string "color", default: "#6172F3", null: false
       t.string "internal_category"
-      t.references :family, null: false, foreign_key: true
+      t.references :family, null: false, foreign_key: true, type: :uuid
 
       t.timestamps
     end

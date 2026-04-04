@@ -1,7 +1,7 @@
 class AddRulesEngine < ActiveRecord::Migration[7.2]
   def change
     create_table :rules do |t|
-      t.references :family, null: false, foreign_key: true
+      t.references :family, null: false, foreign_key: true, type: :uuid
 
       t.string :resource_type, null: false
       t.date :effective_date

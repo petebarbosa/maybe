@@ -15,15 +15,15 @@ class AddKindToTransactions < ActiveRecord::Migration[7.2]
           END
           FROM transfers t
           JOIN entries ON (
-            entries.entryable_id = t.inflow_transaction_id OR
-            entries.entryable_id = t.outflow_transaction_id
+            entries.entryable_id = t.inflow_transaction_id::varchar OR
+            entries.entryable_id = t.outflow_transaction_id::varchar
           )
           LEFT JOIN entries inflow_entries ON (
-            inflow_entries.entryable_id = t.inflow_transaction_id
+            inflow_entries.entryable_id = t.inflow_transaction_id::varchar
             AND inflow_entries.entryable_type = 'Transaction'
           )
           LEFT JOIN accounts destination_accounts ON destination_accounts.id = inflow_entries.account_id
-          WHERE transactions.id = entries.entryable_id
+          WHERE transactions.id::varchar = entries.entryable_id
             AND entries.entryable_type = 'Transaction'
         SQL
       end

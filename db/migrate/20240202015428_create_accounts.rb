@@ -3,7 +3,7 @@ class CreateAccounts < ActiveRecord::Migration[7.2]
     create_table :accounts do |t|
       t.string :type
       t.string :subtype
-      t.references :family, null: false, foreign_key: true
+      t.references :family, null: false, foreign_key: true, type: :uuid
       t.string :name
       t.bigint :balance, default: 0
       t.string :currency, default: "USD"

@@ -3,7 +3,7 @@ class AddTransactionMerchants < ActiveRecord::Migration[7.2]
     create_table :transaction_merchants do |t|
       t.string "name", null: false
       t.string "color", default: "#e99537", null: false
-      t.references :family, null: false, foreign_key: true
+      t.references :family, null: false, foreign_key: true, type: :uuid
 
       t.timestamps
     end
