@@ -5,7 +5,7 @@ module SettingsHelper
     { name: "Security", path: :settings_security_path },
     { name: "Self hosting", path: :settings_hosting_path, condition: :self_hosted? },
     { name: "API Key", path: :settings_api_key_path },
-    { name: "Billing", path: :settings_billing_path, condition: :not_self_hosted? },
+    { name: "Billing", path: :settings_billing_path, condition: :billing_available? },
     { name: "Accounts", path: :accounts_path },
     { name: "Imports", path: :imports_path },
     { name: "Tags", path: :tags_path },
@@ -61,5 +61,9 @@ module SettingsHelper
   private
     def not_self_hosted?
       !self_hosted?
+    end
+
+    def billing_available?
+      !self_hosted? && payments_enabled?
     end
 end
