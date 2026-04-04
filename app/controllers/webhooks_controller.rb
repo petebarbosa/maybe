@@ -35,6 +35,8 @@ class WebhooksController < ApplicationController
   end
 
   def stripe
+    return head :ok if payments_disabled?
+
     stripe_provider = Provider::Registry.get_provider(:stripe)
 
     begin

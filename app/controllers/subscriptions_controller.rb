@@ -1,6 +1,6 @@
 class SubscriptionsController < ApplicationController
-  # Disables subscriptions for self hosted instances
-  guard_feature if: -> { self_hosted? }
+  # Disables subscriptions for self hosted instances or when payments are disabled
+  guard_feature if: -> { self_hosted? || payments_disabled? }
 
   # Upgrade page for unsubscribed users
   def upgrade
