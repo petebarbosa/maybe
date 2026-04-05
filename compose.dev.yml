@@ -32,6 +32,30 @@ services:
       timeout: 5s
       retries: 5
 
+  opencode:
+    image: ghcr.io/sst/opencode:latest
+    container_name: maybe-opencode-dev
+    command: ["opencode", "serve", "--port", "4096", "--hostname", "0.0.0.0"]
+    restart: unless-stopped
+    ports:
+      - "4096:4096"
+    volumes:
+      - ./.opencode:/root/.config/opencode
+    environment:
+      OPENCODE_SERVER_PASSWORD: ${OPENCODE_SERVER_PASSWORD:-}
+      OPENCODE_MCP_HOST: ${OPENCODE_MCP_HOST:-host.docker.internal}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:4096/global/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      - db
+      - redis
+
 volumes:
   postgres-data:
   redis-data:
