@@ -192,3 +192,64 @@ docker volume rm maybe_postgres-data # this is the name of the volume the DB is 
 docker compose up
 docker exec -it maybe-postgres-1 psql -U maybe -d maybe_production -c "SELECT 1;" # This will verify that the issue is fixed
 ```
+
+## Hybrid Development (Rails local + Docker infra)
+
+For development, the recommended setup runs Rails and Sidekiq locally for fast iteration, while DB, Redis, and OpenCode Server run in Docker.
+
+### Prerequisites
+
+- Docker and Docker Compose installed
+- Ruby and dependencies installed (`bundle install`)
+- `.env.development` configured (see `.env.example` for reference)
+
+### Step 1: Start infrastructure containers
+
+```bash
+docker compose -f compose.dev.yml up -d db redis opencode
+```
+
+This starts:
+- PostgreSQL on port 5432
+- Redis on port 6379
+- OpenCode Server on port 4096
+
+### Step 2: Generate OpenCode config
+
+```bash
+bin/rails opencode:config:generate
+```
+
+This writes `.opencode/opencode.json` with the MCP server URL pointing to your local Rails app via `host.docker.internal`.
+
+### Step 3: Start the Rails app
+
+```bash
+bin/dev
+```
+
+This starts the Rails server, Tailwind CSS watcher, and Sidekiq worker locally.
+
+### Step 4: Verify the setup
+
+1. **OpenCode health**: `curl http://localhost:4096/global/health` — should return `{"healthy":true,"version":"..."}`
+2. **AI providers**: Open the settings page (`/settings/hosting`) and verify connected providers/models load
+3. **Chat**: Create a chat and send a message — the AI should respond using the selected model
+4. **MCP**: If you see 401 errors in logs, ensure `MCP_AUTH_TOKEN` is set in `.env.development` and regenerated via `bin/rails opencode:config:generate`
+
+### Troubleshooting
+
+**OpenCode can't reach Rails MCP endpoint**
+
+OpenCode runs in Docker and resolves `host.docker.internal` to your host machine. If MCP calls fail:
+- Verify Rails is running on port 3000
+- Check `OPENCODE_MCP_HOST=host.docker.internal` in your `.env.development`
+- Ensure the MCP route is registered (`POST /mcp` in `config/routes.rb`)
+
+**No providers connected in OpenCode**
+
+OpenCode manages its own provider authentication. Use the OpenCode TUI or `/provider` API to configure providers. The model you select in Rails settings (`OPENCODE_DEFAULT_MODEL`) must match a connected provider/model in OpenCode.
+
+**Provider API keys in Rails env**
+
+Rails does NOT require provider API keys. All provider authentication is managed by OpenCode Server itself. The `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` env vars are optional and only used if you want OpenCode to auto-configure providers via its config file.
