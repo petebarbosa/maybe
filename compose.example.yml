@@ -45,8 +45,6 @@ x-rails-env: &rails_env
   OPENCODE_SERVER_PASSWORD: ${OPENCODE_SERVER_PASSWORD}
   OPENCODE_DEFAULT_MODEL: ${OPENCODE_DEFAULT_MODEL:-qwen/qwen3.6-plus-free}
   MCP_AUTH_TOKEN: ${MCP_AUTH_TOKEN}
-  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-  OPENAI_API_KEY: ${OPENAI_API_KEY}
 
 services:
   web:
@@ -115,16 +113,14 @@ services:
       - kuria_net
 
   opencode:
-    image: ghcr.io/sst/opencode:latest
+    image: ghcr.io/anomalyco/opencode:latest
     container_name: maybe-opencode
-    command: ["opencode", "serve", "--port", "4096", "--hostname", "0.0.0.0"]
+    command: ["serve", "--port", "4096", "--hostname", "0.0.0.0"]
     restart: unless-stopped
     volumes:
       - opencode-config:/root/.config/opencode
     environment:
       OPENCODE_SERVER_PASSWORD: ${OPENCODE_SERVER_PASSWORD}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:4096/global/health"]
       interval: 10s
