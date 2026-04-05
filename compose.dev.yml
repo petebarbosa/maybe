@@ -33,9 +33,9 @@ services:
       retries: 5
 
   opencode:
-    image: ghcr.io/sst/opencode:latest
+    image: ghcr.io/anomalyco/opencode:latest
     container_name: maybe-opencode-dev
-    command: ["opencode", "serve", "--port", "4096", "--hostname", "0.0.0.0"]
+    command: ["serve", "--port", "4096", "--hostname", "0.0.0.0"]
     restart: unless-stopped
     ports:
       - "4096:4096"
@@ -52,9 +52,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-    depends_on:
-      - db
-      - redis
 
 volumes:
   postgres-data:
