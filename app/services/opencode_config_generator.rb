@@ -22,8 +22,11 @@ class OpencodeConfigGenerator
   end
 
   def self.from_settings
+    mcp_host = ENV.fetch("OPENCODE_MCP_HOST", "host.docker.internal")
+    mcp_port = ENV.fetch("PORT", "3000")
+
     new(
-      mcp_url: "http://web:#{ENV.fetch('PORT', 3000)}/mcp",
+      mcp_url: "http://#{mcp_host}:#{mcp_port}/mcp",
       mcp_auth_token: Setting.mcp_auth_token,
       provider_keys: {
         "anthropic" => ENV["ANTHROPIC_API_KEY"],
@@ -34,23 +37,23 @@ class OpencodeConfigGenerator
 
   private
 
-  attr_reader :mcp_url, :mcp_auth_token, :provider_keys
+    attr_reader :mcp_url, :mcp_auth_token, :provider_keys
 
-  def build_providers
-    provider_keys
-      .select { |_name, key| key.present? }
-      .transform_values { |key| { "api_key" => key } }
-  end
+    def build_providers
+      provider_keys
+        .select { |_name, key| key.present? }
+        .transform_values { |key| { "api_key" => key } }
+    end
 
-  def build_mcp_config
-    {
-      "maybe-finance" => {
-        "type" => "remote",
-        "url" => mcp_url,
-        "headers" => {
-          "Authorization" => "Bearer #{mcp_auth_token}"
+    def build_mcp_config
+      {
+        "maybe-finance" => {
+          "type" => "remote",
+          "url" => mcp_url,
+          "headers" => {
+            "Authorization" => "Bearer #{mcp_auth_token}"
+          }
         }
       }
-    }
-  end
+    end
 end
