@@ -72,4 +72,32 @@ class OpencodeConfigGeneratorTest < ActiveSupport::TestCase
       assert_equal "sk-ant-test", parsed.dig("provider", "anthropic", "api_key")
     end
   end
+
+  test "generates hybrid MCP URL when OPENCODE_MCP_HOST is set" do
+    ENV["OPENCODE_MCP_HOST"] = "host.docker.internal"
+    ENV["PORT"] = "3000"
+
+    generator = OpencodeConfigGenerator.from_settings
+    config = generator.generate
+
+    assert_equal "http://host.docker.internal:3000/mcp", config.dig("mcp", "maybe-finance", "url")
+  ensure
+    ENV.delete("OPENCODE_MCP_HOST")
+    ENV.delete("PORT")
+  end
+
+  test "generates valid config without any provider keys" do
+    generator = OpencodeConfigGenerator.new(
+      mcp_url: "http://host.docker.internal:3000/mcp",
+      mcp_auth_token: "test-token",
+      provider_keys: {}
+    )
+
+    config = generator.generate
+
+    assert config.key?("provider")
+    assert config.key?("mcp")
+    assert_equal "http://host.docker.internal:3000/mcp", config.dig("mcp", "maybe-finance", "url")
+    assert config.dig("provider").empty?
+  end
 end
