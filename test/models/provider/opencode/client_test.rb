@@ -55,7 +55,7 @@ class Provider::Opencode::ClientTest < ActiveSupport::TestCase
     schema = {
       type: "object",
       properties: { name: { type: "string" } },
-      required: ["name"]
+      required: [ "name" ]
     }
 
     stub_request(:post, "http://localhost:4096/session/sess_123/message")
@@ -102,17 +102,17 @@ class Provider::Opencode::ClientTest < ActiveSupport::TestCase
         status: 200,
         body: {
           "all" => [
-            { "id" => "qwen", "name" => "Qwen", "models" => [{ "id" => "qwen3.6-plus-free", "name" => "Qwen 3.6 Plus Free" }] }
+            { "id" => "qwen", "name" => "Qwen", "models" => [ { "id" => "qwen3.6-plus-free", "name" => "Qwen 3.6 Plus Free" } ] }
           ],
-          "connected" => ["qwen"],
+          "connected" => [ "qwen" ],
           "default" => { "qwen" => "qwen3.6-plus-free" }
         }.to_json,
         headers: { "Content-Type" => "application/json" }
       )
 
     result = @client.list_providers
-    assert_equal "anthropic", result.dig("all", 0, "id")
-    assert_includes result["connected"], "anthropic"
+    assert_equal "qwen", result.dig("all", 0, "id")
+    assert_includes result["connected"], "qwen"
   end
 
   test "abort_session returns boolean" do
