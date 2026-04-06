@@ -21,4 +21,10 @@ module Provider::LlmConcept
   def chat_response(prompt, model:, instructions: nil, functions: [], function_results: [], streamer: nil, previous_response_id: nil)
     raise NotImplementedError, "Subclasses must implement #chat_response"
   end
+
+  MerchantSuggestion = Data.define(:merchant_id, :confidence, :rationale)
+
+  def suggest_merchant(raw_name:, normalized_name:, user_merchants:)
+    raise NotImplementedError, "Subclasses must implement #suggest_merchant"
+  end
 end

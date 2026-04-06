@@ -69,6 +69,18 @@ class Provider::Opencode < Provider
     end
   end
 
+  def suggest_merchant(raw_name:, normalized_name:, user_merchants:)
+    with_provider_response do
+      MerchantSuggester.new(
+        client,
+        raw_name: raw_name,
+        normalized_name: normalized_name,
+        user_merchants: user_merchants,
+        model: parse_model(Setting.opencode_default_model)
+      ).suggest
+    end
+  end
+
   private
     attr_reader :client
 
