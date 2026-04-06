@@ -4,9 +4,10 @@ module MerchantNameNormalizer
 
     name.to_s
         .upcase
+        .gsub(/'/, "")
         .unicode_normalize(:nfkd)
         .gsub(/[\u0300-\u036f]/, "")
-        .gsub(/[^\p{Alnum}\s]/, "")
+        .gsub(/[^\p{Alnum}\s]/, " ")
         .gsub(/\s+/, " ")
         .strip
   end
