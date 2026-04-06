@@ -1,0 +1,17 @@
+plaza_vea_alias_1:
+  family: dylan_family
+  merchant: netflix
+  raw_name: "PLVAA PLVAL STORE"
+  normalized_name: "PLVAA PLVAL STORE"
+  source: user_manual
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+plaza_vea_alias_2:
+  family: dylan_family
+  merchant: amazon
+  raw_name: "Plaza-Vea Market"
+  normalized_name: "PLAZA VEA MARKET"
+  source: user_resolution
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

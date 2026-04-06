@@ -8,6 +8,8 @@ class FamilyMerchant < Merchant
   validates :color, presence: true
   validates :name, uniqueness: { scope: :family }
 
+  has_many :aliases, class_name: "MerchantAlias", foreign_key: :merchant_id, dependent: :destroy
+
   private
     def set_default_color
       self.color = COLORS.sample
