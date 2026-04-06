@@ -22,6 +22,11 @@ class TransactionsController < ApplicationController
                        )
 
     @pagy, @transactions = pagy(base_scope, limit: per_page)
+
+    # Pagy 43.x no longer auto-redirects on overflow; handle it manually
+    if @pagy.in == 0 && @pagy.page > @pagy.last
+      redirect_to transactions_url(page: @pagy.last, per_page: per_page, q: @q)
+    end
   end
 
   def clear_filter
