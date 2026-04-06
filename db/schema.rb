@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_03_231449) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_05_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -20,7 +20,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_231449) do
     t.string "accountable_type"
     t.decimal "balance", precision: 19, scale: 4
     t.decimal "cash_balance", precision: 19, scale: 4, default: "0.0"
-    t.virtual "classification", type: :string, as: "\nCASE\n    WHEN ((accountable_type)::text = ANY ((ARRAY['Loan'::character varying, 'CreditCard'::character varying, 'OtherLiability'::character varying])::text[])) THEN 'liability'::text\n    ELSE 'asset'::text\nEND", stored: true
+    t.virtual "classification", type: :string, as: "\nCASE\n    WHEN ((accountable_type)::text = ANY (ARRAY[('Loan'::character varying)::text, ('CreditCard'::character varying)::text, ('OtherLiability'::character varying)::text])) THEN 'liability'::text\n    ELSE 'asset'::text\nEND", stored: true
     t.datetime "created_at", null: false
     t.string "currency"
     t.uuid "family_id", null: false
@@ -221,7 +221,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_231449) do
     t.datetime "created_at", null: false
     t.string "currency"
     t.date "date"
-    t.string "entryable_id"
+    t.bigint "entryable_id"
     t.string "entryable_type"
     t.boolean "excluded", default: false
     t.bigint "import_id"
@@ -234,7 +234,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_231449) do
     t.index ["account_id", "date"], name: "index_entries_on_account_id_and_date"
     t.index ["account_id"], name: "index_entries_on_account_id"
     t.index ["date"], name: "index_entries_on_date"
-    t.index ["entryable_type"], name: "index_entries_on_entryable_type"
+    t.index ["entryable_type", "entryable_id"], name: "index_entries_on_entryable_type_and_entryable_id"
     t.index ["import_id"], name: "index_entries_on_import_id"
   end
 
@@ -418,6 +418,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_231449) do
     t.string "rate_type"
     t.integer "term_months"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "merchant_aliases", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.uuid "family_id", null: false
+    t.bigint "merchant_id", null: false
+    t.string "normalized_name", null: false
+    t.string "raw_name", null: false
+    t.string "source", default: "user_manual", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id", "normalized_name"], name: "index_merchant_aliases_on_family_and_normalized_name", unique: true
+    t.index ["family_id"], name: "index_merchant_aliases_on_family_id"
+    t.index ["merchant_id"], name: "index_merchant_aliases_on_merchant_id"
+    t.index ["source"], name: "index_merchant_aliases_on_source"
   end
 
   create_table "merchants", force: :cascade do |t|
@@ -801,7 +815,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_231449) do
     t.index ["family_id"], name: "index_users_on_family_id"
     t.index ["last_viewed_chat_id"], name: "index_users_on_last_viewed_chat_id"
     t.index ["otp_secret"], name: "index_users_on_otp_secret", unique: true, where: "(otp_secret IS NOT NULL)"
-    t.check_constraint "role::text = ANY (ARRAY['admin'::character varying, 'member'::character varying, 'super_admin'::character varying]::text[])", name: "check_user_role"
+    t.check_constraint "role::text = ANY (ARRAY['admin'::character varying::text, 'member'::character varying::text, 'super_admin'::character varying::text])", name: "check_user_role"
   end
 
   create_table "valuations", force: :cascade do |t|
@@ -846,6 +860,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_231449) do
   add_foreign_key "imports", "families"
   add_foreign_key "invitations", "families"
   add_foreign_key "invitations", "users", column: "inviter_id"
+  add_foreign_key "merchant_aliases", "families"
+  add_foreign_key "merchant_aliases", "merchants"
   add_foreign_key "merchants", "families"
   add_foreign_key "messages", "chats"
   add_foreign_key "mobile_devices", "users"
