@@ -58,6 +58,7 @@ class Settings::HostingsController < ApplicationController
       @ai_connected = false
       @ai_connected_providers = []
       @ai_available_models = []
+      @ai_default_model_valid = false
 
       client = Provider::Opencode::Client.new(
         base_url: Setting.opencode_server_url,
@@ -73,10 +74,35 @@ class Settings::HostingsController < ApplicationController
         .select { |p| @ai_connected_providers.include?(p["id"]) }
         .flat_map do |provider|
           (provider["models"] || []).map do |model|
-            ["#{provider['name']} / #{model['name']}", "#{provider['id']}/#{model['id']}"]
+            [ "#{provider['name']} / #{model['name']}", "#{provider['id']}/#{model['id']}" ]
           end
         end
+
+      # Validate and auto-correct default model if needed
+      validate_and_correct_default_model
     rescue Faraday::Error, StandardError
       @ai_connected = false
+    end
+
+    def validate_and_correct_default_model
+      current_model = Setting.opencode_default_model
+      return if current_model.blank?
+
+      # Check if current model is in the available models list
+      available_model_ids = @ai_available_models.map(&:last)
+      @ai_default_model_valid = available_model_ids.include?(current_model)
+
+      # If model is invalid, try to auto-correct to a free model
+      unless @ai_default_model_valid
+        begin
+          free_model = OpencodeModelResolver.resolve
+          if free_model.present? && available_model_ids.include?(free_model)
+            Setting.opencode_default_model = free_model
+            @ai_default_model_valid = true
+          end
+        rescue OpencodeModelResolver::ResolutionError
+          # Could not resolve a free model, leave as is
+        end
+      end
     end
 end

@@ -11,7 +11,13 @@ class McpController < ApplicationController
         McpTools::GetTransactions,
         McpTools::GetAccounts,
         McpTools::GetBalanceSheet,
-        McpTools::GetIncomeStatement
+        McpTools::GetIncomeStatement,
+        McpTools::ConfirmAction,
+        McpTools::CreateTransaction,
+        McpTools::UpdateTransaction,
+        McpTools::CreateOrUpdateBudget,
+        McpTools::CreateOrUpdateBudgetCategory,
+        McpTools::UpsertExchangeRates
       ]
     )
 
@@ -21,18 +27,18 @@ class McpController < ApplicationController
 
   private
 
-  def authenticate_mcp_client
-    token = extract_bearer_token
-    expected = Setting.mcp_auth_token
+    def authenticate_mcp_client
+      token = extract_bearer_token
+      expected = Setting.mcp_auth_token
 
-    unless expected.present? && token.present? && ActiveSupport::SecurityUtils.secure_compare(token, expected)
-      render json: { error: "Unauthorized" }, status: :unauthorized
+      unless expected.present? && token.present? && ActiveSupport::SecurityUtils.secure_compare(token, expected)
+        render json: { error: "Unauthorized" }, status: :unauthorized
+      end
     end
-  end
 
-  def extract_bearer_token
-    header = request.headers["Authorization"]
-    return nil unless header&.start_with?("Bearer ")
-    header.sub("Bearer ", "")
-  end
+    def extract_bearer_token
+      header = request.headers["Authorization"]
+      return nil unless header&.start_with?("Bearer ")
+      header.sub("Bearer ", "")
+    end
 end
