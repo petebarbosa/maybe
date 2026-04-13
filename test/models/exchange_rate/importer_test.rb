@@ -140,9 +140,52 @@ class ExchangeRate::ImporterTest < ActiveSupport::TestCase
     assert_equal 1, ExchangeRate.count
   end
 
+  test "crypto uses forward-only: only fetches today, not historical" do
+    ExchangeRate.delete_all
+
+    provider_response = provider_success_response([
+      OpenStruct.new(from: "BTC", to: "USD", date: Date.current, rate: 67000.0)
+    ])
+
+    @provider.expects(:fetch_exchange_rates)
+             .with(from: "BTC", to: "USD", start_date: Date.current, end_date: Date.current)
+             .returns(provider_response)
+
+    ExchangeRate::Importer.new(
+      exchange_rate_provider: @provider,
+      from: "BTC",
+      to: "USD",
+      start_date: 30.days.ago.to_date,
+      end_date: Date.current
+    ).import_provider_rates
+
+    db_rates = ExchangeRate.where(from_currency: "BTC", to_currency: "USD")
+    assert_equal 1, db_rates.count
+    assert_equal Date.current, db_rates.first.date
+  end
+
+  test "crypto returns error when historical rate not in DB and provider rejects historical request" do
+    ExchangeRate.delete_all
+
+    provider_response = provider_error_response(StandardError.new("FreeCrypto free tier does not support historical data"))
+
+    @provider.expects(:fetch_exchange_rates)
+             .with(from: "BTC", to: "USD", start_date: Date.current, end_date: Date.current)
+             .returns(provider_response)
+
+    ExchangeRate::Importer.new(
+      exchange_rate_provider: @provider,
+      from: "BTC",
+      to: "USD",
+      start_date: 30.days.ago.to_date,
+      end_date: Date.current
+    ).import_provider_rates
+
+    assert_equal 0, ExchangeRate.count
+  end
+
   private
     def get_provider_fetch_start_date(start_date)
-      # We fetch with a 5 day buffer to account for weekends and holidays
       start_date - 5.days
     end
 end

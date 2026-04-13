@@ -41,7 +41,7 @@ class HoldingTest < ActiveSupport::TestCase
     mock_provider.stubs(:fetch_exchange_rate).returns(
       Provider::Response.new(success?: true, data: Provider::ExchangeRateConcept::Rate.new(date: Date.current, from: "CAD", to: "USD", rate: 1), error: nil)
     )
-    Provider::Registry.any_instance.stubs(:get_provider).with(:opencode_exchange_rates).returns(mock_provider)
+    Provider::Registry.any_instance.stubs(:get_provider).with(:composite_exchange_rates).returns(mock_provider)
 
     assert_equal Money.new((212.00 + 216.00).to_d / 2, "CAD").exchange_to("USD", fallback_rate: 1), @amzn.avg_cost
     assert_equal Money.new((128.00 + 124.00).to_d / 2, "CAD").exchange_to("USD", fallback_rate: 1), @nvda.avg_cost
