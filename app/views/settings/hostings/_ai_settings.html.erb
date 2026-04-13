@@ -17,6 +17,13 @@
     </span>
   </div>
   <% if @ai_connected && @ai_available_models.any? %>
+    <% if defined?(@ai_default_model_valid) && !@ai_default_model_valid %>
+      <div class="mb-4 p-3 bg-yellow-100 border border-yellow-400 rounded-lg">
+        <p class="text-sm text-yellow-800">
+          <strong>Model Updated:</strong> Your previous AI model was unavailable and has been automatically switched to a working free model.
+        </p>
+      </div>
+    <% end %>
     <%= styled_form_with model: Setting.new,
                          url: settings_hosting_path,
                          method: :patch,
