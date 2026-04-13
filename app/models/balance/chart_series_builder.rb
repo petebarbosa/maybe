@@ -129,7 +129,7 @@ class Balance::ChartSeriesBuilder
                  b.start_non_cash_balance,
                  b.flows_factor
           FROM balances b
-          WHERE b.account_id = accounts.id
+          WHERE b.account_id::text = accounts.id::text
             AND b.date <= d.date
           ORDER BY b.date DESC
           LIMIT 1
