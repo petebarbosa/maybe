@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_05_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_10_044026) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
 
-  create_table "accounts", force: :cascade do |t|
+  create_table "accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "accountable_id"
     t.string "accountable_type"
     t.decimal "balance", precision: 19, scale: 4
@@ -35,7 +35,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_200000) do
     t.index ["accountable_type"], name: "index_accounts_on_accountable_type"
     t.index ["currency"], name: "index_accounts_on_currency"
     t.index ["family_id", "accountable_type"], name: "index_accounts_on_family_id_and_accountable_type"
-    t.index ["family_id", "id"], name: "index_accounts_on_family_id_and_id"
     t.index ["family_id", "status"], name: "index_accounts_on_family_id_and_status"
     t.index ["family_id"], name: "index_accounts_on_family_id"
     t.index ["import_id"], name: "index_accounts_on_import_id"
@@ -216,12 +215,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_200000) do
   end
 
   create_table "entries", force: :cascade do |t|
-    t.bigint "account_id", null: false
+    t.uuid "account_id"
     t.decimal "amount", precision: 19, scale: 4, null: false
     t.datetime "created_at", null: false
     t.string "currency"
     t.date "date"
-    t.bigint "entryable_id"
+    t.string "entryable_id"
     t.string "entryable_type"
     t.boolean "excluded", default: false
     t.bigint "import_id"
@@ -231,10 +230,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_200000) do
     t.string "plaid_id"
     t.datetime "updated_at", null: false
     t.index "lower((name)::text)", name: "index_entries_on_lower_name"
-    t.index ["account_id", "date"], name: "index_entries_on_account_id_and_date"
-    t.index ["account_id"], name: "index_entries_on_account_id"
     t.index ["date"], name: "index_entries_on_date"
-    t.index ["entryable_type", "entryable_id"], name: "index_entries_on_entryable_type_and_entryable_id"
+    t.index ["entryable_type"], name: "index_entries_on_entryable_type"
     t.index ["import_id"], name: "index_entries_on_import_id"
   end
 
@@ -536,6 +533,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_200000) do
     t.datetime "created_at", null: false
     t.json "locked_attributes", default: {}
     t.datetime "updated_at", null: false
+  end
+
+  create_table "pending_actions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "action_type", null: false
+    t.jsonb "audit_result"
+    t.datetime "confirmed_at"
+    t.string "confirmed_by"
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.uuid "family_id", null: false
+    t.jsonb "params", default: {}, null: false
+    t.jsonb "preview", default: {}, null: false
+    t.datetime "updated_at", null: false
+    t.uuid "user_id"
+    t.index ["expires_at"], name: "index_pending_actions_on_expires_at"
+    t.index ["family_id", "action_type"], name: "index_pending_actions_on_family_id_and_action_type"
   end
 
   create_table "plaid_accounts", force: :cascade do |t|
@@ -842,7 +855,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_200000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
-  add_foreign_key "balances", "accounts", on_delete: :cascade
   add_foreign_key "budget_categories", "budgets"
   add_foreign_key "budget_categories", "categories"
   add_foreign_key "budgets", "families"
@@ -851,7 +863,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_200000) do
   add_foreign_key "entries", "accounts"
   add_foreign_key "entries", "imports"
   add_foreign_key "family_exports", "families"
-  add_foreign_key "holdings", "accounts"
   add_foreign_key "holdings", "securities"
   add_foreign_key "impersonation_session_logs", "impersonation_sessions"
   add_foreign_key "impersonation_sessions", "users", column: "impersonated_id"
