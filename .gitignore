@@ -55,6 +55,10 @@
 
 # Ignore .devcontainer files
 compose-dev.yaml
+compose.dev.yml
+
+# Ignore sensitive local/test artifacts
+test/vcr_cassettes/plaid/*.yml
 
 # Ignore asdf ruby version file
 .tool-versions
