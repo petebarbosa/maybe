@@ -8,14 +8,14 @@ class AssistantTest < ActiveSupport::TestCase
     @message = @chat.messages.create!(
       type: "UserMessage",
       content: "What is my net worth?",
-      ai_model: "qwen/qwen3.6-plus-free"
+      ai_model: "opencode/minimax-m2.5-free"
     )
     @assistant = Assistant.for_chat(@chat)
     @provider = mock
   end
 
   test "errors get added to chat" do
-    @assistant.expects(:get_model_provider).with("qwen/qwen3.6-plus-free").returns(@provider)
+    @assistant.expects(:get_model_provider).with("opencode/minimax-m2.5-free").returns(@provider)
 
     error = StandardError.new("test error")
     @provider.expects(:chat_response).returns(provider_error_response(error))
@@ -28,12 +28,12 @@ class AssistantTest < ActiveSupport::TestCase
   end
 
   test "responds to basic prompt" do
-    @assistant.expects(:get_model_provider).with("qwen/qwen3.6-plus-free").returns(@provider)
+    @assistant.expects(:get_model_provider).with("opencode/minimax-m2.5-free").returns(@provider)
 
     text_chunk = provider_text_chunk("Your net worth is $50,000.")
     response_data = Provider::LlmConcept::ChatResponse.new(
       id: "msg_1",
-      model: "qwen/qwen3.6-plus-free",
+      model: "opencode/minimax-m2.5-free",
       messages: [provider_message(id: "msg_1", text: "Your net worth is $50,000.")],
       function_requests: []
     )

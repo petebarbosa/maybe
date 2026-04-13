@@ -32,7 +32,7 @@ class Provider::Opencode::ClientTest < ActiveSupport::TestCase
           "info" => {
             "id" => "msg_456",
             "role" => "assistant",
-            "model" => { "providerID" => "qwen", "modelID" => "qwen3.6-plus-free" },
+            "model" => { "providerID" => "opencode", "modelID" => "minimax.2.5-free" },
             "structured_output" => nil
           },
           "parts" => [
@@ -44,7 +44,7 @@ class Provider::Opencode::ClientTest < ActiveSupport::TestCase
 
     result = @client.send_message("sess_123",
       content: "Hello",
-      model: { providerID: "qwen", modelID: "qwen3.6-plus-free" }
+      model: { providerID: "opencode", modelID: "minimax.2.5-free" }
     )
 
     assert_equal "msg_456", result.dig("info", "id")
@@ -102,17 +102,17 @@ class Provider::Opencode::ClientTest < ActiveSupport::TestCase
         status: 200,
         body: {
           "all" => [
-            { "id" => "qwen", "name" => "Qwen", "models" => [ { "id" => "qwen3.6-plus-free", "name" => "Qwen 3.6 Plus Free" } ] }
+            { "id" => "opencode", "name" => "MiniMax", "models" => [ { "id" => "minimax.2.5-free", "name" => "MiniMax 2.5 Free" } ] }
           ],
-          "connected" => [ "qwen" ],
-          "default" => { "qwen" => "qwen3.6-plus-free" }
+          "connected" => [ "opencode" ],
+          "default" => { "opencode" => "minimax.2.5-free" }
         }.to_json,
         headers: { "Content-Type" => "application/json" }
       )
 
     result = @client.list_providers
-    assert_equal "qwen", result.dig("all", 0, "id")
-    assert_includes result["connected"], "qwen"
+    assert_equal "opencode", result.dig("all", 0, "id")
+    assert_includes result["connected"], "opencode"
   end
 
   test "abort_session returns boolean" do

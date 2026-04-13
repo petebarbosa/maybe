@@ -34,7 +34,7 @@ class Provider::Opencode::AutoMerchantDetectorTest < ActiveSupport::TestCase
       @client,
       transactions: transactions,
       user_merchants: user_merchants,
-      model: { providerID: "anthropic", modelID: "qwen3.6-plus-free" }
+      model: { providerID: "anthropic", modelID: "minimax.2.5-free" }
     )
 
     results = detector.auto_detect_merchants
