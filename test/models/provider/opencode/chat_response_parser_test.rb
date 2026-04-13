@@ -87,4 +87,22 @@ class Provider::Opencode::ChatResponseParserTest < ActiveSupport::TestCase
     assert_equal 0, result.messages.size
     assert_equal 0, result.function_requests.size
   end
+
+  test "raises InvalidResponseError when given nil response" do
+    assert_raises(Provider::Opencode::ChatResponseParser::InvalidResponseError) do
+      Provider::Opencode::ChatResponseParser.new(nil).parsed
+    end
+  end
+
+  test "raises InvalidResponseError when given empty string response" do
+    assert_raises(Provider::Opencode::ChatResponseParser::InvalidResponseError) do
+      Provider::Opencode::ChatResponseParser.new("").parsed
+    end
+  end
+
+  test "raises InvalidResponseError when given non-Hash response" do
+    assert_raises(Provider::Opencode::ChatResponseParser::InvalidResponseError) do
+      Provider::Opencode::ChatResponseParser.new([ "unexpected", "array" ]).parsed
+    end
+  end
 end

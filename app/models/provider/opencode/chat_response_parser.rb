@@ -1,9 +1,15 @@
 class Provider::Opencode::ChatResponseParser
+  class InvalidResponseError < StandardError; end
+
   def initialize(raw_response)
     @raw_response = raw_response
   end
 
   def parsed
+    unless raw_response.is_a?(Hash)
+      raise InvalidResponseError, "Expected Hash response from OpenCode, got #{raw_response.class}"
+    end
+
     ChatResponse.new(
       id: message_id,
       model: model_string,

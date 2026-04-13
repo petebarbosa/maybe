@@ -122,6 +122,41 @@ class Provider::OpencodeTest < ActiveSupport::TestCase
     assert_kind_of Provider::Opencode::Error, response.error
   end
 
+  test "chat_response wraps client InvalidResponseError in provider Error" do
+    session_response = { "id" => "sess_err" }
+    @client.expects(:create_session).returns(session_response)
+    @client.expects(:send_message).raises(
+      Provider::Opencode::Client::InvalidResponseError,
+      "expected Hash, got NilClass"
+    )
+
+    response = @provider.chat_response(
+      "Hello",
+      model: "invalid/model"
+    )
+
+    refute response.success?
+    assert_kind_of Provider::Opencode::Error, response.error
+    assert_match(/OpenCode API response error/, response.error.message)
+    assert_equal "invalid/model", response.error.details[:model]
+    assert_equal "sess_err", response.error.details[:session_id]
+  end
+
+  test "chat_response wraps parser InvalidResponseError in provider Error" do
+    session_response = { "id" => "sess_parse_err" }
+    @client.expects(:create_session).returns(session_response)
+    @client.expects(:send_message).returns(nil)
+
+    response = @provider.chat_response(
+      "Hello",
+      model: "qwen/qwen3.6-plus-free"
+    )
+
+    refute response.success?
+    assert_kind_of Provider::Opencode::Error, response.error
+    assert_match(/OpenCode API response error/, response.error.message)
+  end
+
   test "auto_categorize delegates to AutoCategorizer" do
     expected_results = [
       Provider::LlmConcept::AutoCategorization.new(transaction_id: "1", category_name: "Food")
@@ -132,8 +167,8 @@ class Provider::OpencodeTest < ActiveSupport::TestCase
       .returns(expected_results)
 
     response = @provider.auto_categorize(
-      transactions: [{ id: "1", name: "McDonalds" }],
-      user_categories: [{ name: "Food" }]
+      transactions: [ { id: "1", name: "McDonalds" } ],
+      user_categories: [ { name: "Food" } ]
     )
 
     assert response.success?
@@ -155,7 +190,7 @@ class Provider::OpencodeTest < ActiveSupport::TestCase
       .returns(expected_results)
 
     response = @provider.auto_detect_merchants(
-      transactions: [{ id: "1", name: "McDonalds" }],
+      transactions: [ { id: "1", name: "McDonalds" } ],
       user_merchants: []
     )
 
