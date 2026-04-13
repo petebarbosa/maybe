@@ -24,4 +24,14 @@ class Provider::RegistryTest < ActiveSupport::TestCase
       assert_nil Provider::Registry.get_provider(:synth)
     end
   end
+
+  test "composite_exchange_rates returns instance" do
+    provider = Provider::Registry.get_provider(:composite_exchange_rates)
+    assert_instance_of Provider::CompositeExchangeRates, provider
+  end
+
+  test "composite_exchange_rates available providers includes composite" do
+    registry = Provider::Registry.for_concept(:exchange_rates)
+    assert_includes registry.providers.map(&:class), Provider::CompositeExchangeRates
+  end
 end

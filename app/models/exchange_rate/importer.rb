@@ -1,6 +1,7 @@
 class ExchangeRate::Importer
   MissingExchangeRateError = Class.new(StandardError)
   MissingStartRateError = Class.new(StandardError)
+  CRYPTO_CODES = %w[BTC ETH SOL XBT].freeze
 
   def initialize(exchange_rate_provider:, from:, to:, start_date:, end_date:, clear_cache: false)
     @exchange_rate_provider = exchange_rate_provider
@@ -20,6 +21,24 @@ class ExchangeRate::Importer
 
     if provider_rates.empty?
       Rails.logger.warn("Could not fetch rates for #{from} to #{to} between #{start_date} and #{end_date} because provider returned no rates")
+      return
+    end
+
+    if crypto_pair?
+      rows = provider_rates.values
+                           .select { |rate| rate.date >= start_date && rate.date <= end_date }
+                           .map do |rate|
+        {
+          from_currency: rate.from,
+          to_currency: rate.to,
+          date: rate.date,
+          rate: rate.rate
+        }
+      end
+
+      return if rows.empty?
+
+      upsert_rows(rows)
       return
     end
 
@@ -106,14 +125,20 @@ class ExchangeRate::Importer
 
     def provider_rates
       @provider_rates ||= begin
-        # Always fetch with a 5 day buffer to ensure we have a starting rate (for weekends and holidays)
-        provider_fetch_start_date = effective_start_date - 5.days
+        provider_fetch_start_date = if crypto_pair?
+          Date.current
+        else
+          # Always fetch with a 5 day buffer to ensure we have a starting rate (for weekends and holidays)
+          effective_start_date - 5.days
+        end
+
+        provider_fetch_end_date = crypto_pair? ? Date.current : end_date
 
         provider_response = exchange_rate_provider.fetch_exchange_rates(
           from: from,
           to: to,
           start_date: provider_fetch_start_date,
-          end_date: end_date
+          end_date: provider_fetch_end_date
         )
 
         if provider_response.success?
@@ -152,5 +177,9 @@ class ExchangeRate::Importer
     def normalize_end_date(requested_end_date)
       today_est = Date.current.in_time_zone("America/New_York").to_date
       [ requested_end_date, today_est ].min
+    end
+
+    def crypto_pair?
+      CRYPTO_CODES.include?(from) || CRYPTO_CODES.include?(to)
     end
 end

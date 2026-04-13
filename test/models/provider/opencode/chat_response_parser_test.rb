@@ -6,7 +6,7 @@ class Provider::Opencode::ChatResponseParserTest < ActiveSupport::TestCase
       "info" => {
         "id" => "msg_123",
         "role" => "assistant",
-        "model" => { "providerID" => "qwen", "modelID" => "qwen3.6-plus-free" },
+        "model" => { "providerID" => "opencode", "modelID" => "minimax.2.5-free" },
         "structured_output" => nil
       },
       "parts" => [
@@ -17,7 +17,7 @@ class Provider::Opencode::ChatResponseParserTest < ActiveSupport::TestCase
     result = Provider::Opencode::ChatResponseParser.new(raw_response).parsed
 
     assert_equal "msg_123", result.id
-    assert_equal "qwen/qwen3.6-plus-free", result.model
+    assert_equal "opencode/minimax-m2.5-free", result.model
     assert_equal 1, result.messages.size
     assert_equal "Your net worth is $50,000.", result.messages.first.output_text
     assert_equal 0, result.function_requests.size
@@ -48,7 +48,7 @@ class Provider::Opencode::ChatResponseParserTest < ActiveSupport::TestCase
       "info" => {
         "id" => "msg_789",
         "role" => "assistant",
-        "model" => { "providerID" => "qwen", "modelID" => "qwen3.6-plus-free" }
+        "model" => { "providerID" => "opencode", "modelID" => "minimax.2.5-free" }
       },
       "parts" => [
         {
@@ -76,7 +76,7 @@ class Provider::Opencode::ChatResponseParserTest < ActiveSupport::TestCase
       "info" => {
         "id" => "msg_empty",
         "role" => "assistant",
-        "model" => { "providerID" => "qwen", "modelID" => "qwen3.6-plus-free" }
+        "model" => { "providerID" => "opencode", "modelID" => "minimax.2.5-free" }
       },
       "parts" => []
     }

@@ -8,6 +8,7 @@ class Setting < RailsSettings::Base
   field :opencode_default_model, type: :string, default: ENV["OPENCODE_DEFAULT_MODEL"]
   field :mcp_auth_token, type: :string, default: ENV["MCP_AUTH_TOKEN"]
 
+  field :freecrypto_api_key, type: :string, default: ENV["FREECRYPTO_API_KEY"]
   field :require_invite_for_signup, type: :boolean, default: false
   field :require_email_confirmation, type: :boolean, default: ENV.fetch("REQUIRE_EMAIL_CONFIRMATION", "true") == "true"
 end
