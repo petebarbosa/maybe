@@ -118,7 +118,8 @@ At minimum you will need to set the following environment variables:
 | `SECRET_KEY_BASE` | Required. Generate with `openssl rand -hex 64`. |
 | `SELF_HOSTED` | Set to `true` to enable self-hosting mode. |
 | `PAYMENTS_ENABLED` | Set to `false` to disable Stripe/subscription billing (all accounts treated as paid). |
-| `SYNTH_API_KEY` | Exchange rate and market data (optional). |
+| `SYNTH_API_KEY` | Security market data provider (optional). |
+| `FREECRYPTO_API_KEY` | Crypto exchange-rate snapshots via FreeCryptoAPI (optional; historical crypto unsupported on free tier). |
 | `OPENCODE_SERVER_URL` | URL for OpenCode Server (AI assistant). |
 | `OPENCODE_SERVER_PASSWORD` | Password for OpenCode Server authentication. |
 | `OPENCODE_DEFAULT_MODEL` | Default model for AI assistant (e.g. `qwen/qwen3.6-plus-free`). |

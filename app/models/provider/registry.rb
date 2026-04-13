@@ -60,11 +60,11 @@ class Provider::Registry
         Provider::Github.new
       end
 
-      def opencode_exchange_rates
-        url = Setting.opencode_server_url
-        return nil unless url.present?
+      def composite_exchange_rates
+        freecrypto_key = Setting.freecrypto_api_key.presence || ENV["FREECRYPTO_API_KEY"]
+        freecrypto = freecrypto_key.present? ? Provider::FreecryptoExchangeRates.new(api_key: freecrypto_key) : nil
 
-        Provider::OpencodeExchangeRates.new
+        Provider::CompositeExchangeRates.new(freecrypto: freecrypto)
       end
 
       def opencode
@@ -98,7 +98,7 @@ class Provider::Registry
     def available_providers
       case concept
       when :exchange_rates
-        %i[opencode_exchange_rates]
+        %i[composite_exchange_rates]
       when :securities
         %i[synth]
       when :llm
