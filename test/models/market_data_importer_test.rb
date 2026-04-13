@@ -18,7 +18,7 @@ class MarketDataImporterTest < ActiveSupport::TestCase
     @security_provider = mock("security_provider")
     Provider::Registry.any_instance
                       .stubs(:get_provider)
-                      .with(:opencode_exchange_rates)
+                      .with(:composite_exchange_rates)
                       .returns(@exchange_rate_provider)
     Provider::Registry.any_instance
                       .stubs(:get_provider)

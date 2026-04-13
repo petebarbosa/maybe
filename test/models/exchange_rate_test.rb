@@ -67,4 +67,33 @@ class ExchangeRateTest < ActiveSupport::TestCase
 
     assert_nil ExchangeRate.find_or_fetch_rate(from: "USD", to: "EUR", date: Date.current, cache: true)
   end
+
+  test "finds historical crypto rate from DB" do
+    crypto_rate = ExchangeRate.create!(
+      from_currency: "BTC",
+      to_currency: "USD",
+      date: 30.days.ago.to_date,
+      rate: 65000.0
+    )
+
+    @provider.expects(:fetch_exchange_rate).never
+
+    assert_equal crypto_rate, ExchangeRate.find_or_fetch_rate(
+      from: "BTC",
+      to: "USD",
+      date: 30.days.ago.to_date
+    )
+  end
+
+  test "returns nil when crypto rate not in DB and new provider returns error (historical not available)" do
+    ExchangeRate.delete_all
+
+    provider_response = provider_error_response(StandardError.new("FreeCrypto free tier does not support historical data"))
+
+    @provider.expects(:fetch_exchange_rate)
+           .with(from: "BTC", to: "USD", date: 30.days.ago.to_date)
+           .returns(provider_response)
+
+    assert_nil ExchangeRate.find_or_fetch_rate(from: "BTC", to: "USD", date: 30.days.ago.to_date, cache: true)
+  end
 end
