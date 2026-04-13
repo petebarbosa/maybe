@@ -60,6 +60,13 @@ class Provider::Registry
         Provider::Github.new
       end
 
+      def opencode_exchange_rates
+        url = Setting.opencode_server_url
+        return nil unless url.present?
+
+        Provider::OpencodeExchangeRates.new
+      end
+
       def opencode
         url = Setting.opencode_server_url
         return nil unless url.present?
@@ -91,7 +98,7 @@ class Provider::Registry
     def available_providers
       case concept
       when :exchange_rates
-        %i[synth]
+        %i[opencode_exchange_rates]
       when :securities
         %i[synth]
       when :llm

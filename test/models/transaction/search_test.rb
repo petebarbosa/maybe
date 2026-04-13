@@ -152,7 +152,7 @@ class Transaction::SearchTest < ActiveSupport::TestCase
     assert_not_includes result_ids, transaction2.entryable.id
 
     # Test that the relation builds from family.transactions correctly
-    assert_equal @family.transactions.joins(entry: :account).where(
+    assert_equal @family.transactions.where(
       "entries.amount >= 0 AND NOT (transactions.kind IN ('funds_movement', 'cc_payment', 'loan_payment'))"
     ).count, results.count
   end

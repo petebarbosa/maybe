@@ -14,11 +14,16 @@ class MarketDataImporterTest < ActiveSupport::TestCase
     Holding.delete_all
     Security.delete_all
 
-    @provider = mock("provider")
+    @exchange_rate_provider = mock("exchange_rate_provider")
+    @security_provider = mock("security_provider")
+    Provider::Registry.any_instance
+                      .stubs(:get_provider)
+                      .with(:opencode_exchange_rates)
+                      .returns(@exchange_rate_provider)
     Provider::Registry.any_instance
                       .stubs(:get_provider)
                       .with(:synth)
-                      .returns(@provider)
+                      .returns(@security_provider)
   end
 
   test "syncs required exchange rates" do
@@ -37,7 +42,7 @@ class MarketDataImporterTest < ActiveSupport::TestCase
     expected_start_date = (SNAPSHOT_START_DATE + 1.day) - PROVIDER_BUFFER
     end_date            = Date.current.in_time_zone("America/New_York").to_date
 
-    @provider.expects(:fetch_exchange_rates)
+    @exchange_rate_provider.expects(:fetch_exchange_rates)
              .with(from: "CAD",
                    to: "USD",
                    start_date: expected_start_date,
@@ -59,7 +64,7 @@ class MarketDataImporterTest < ActiveSupport::TestCase
     expected_start_date = SNAPSHOT_START_DATE - PROVIDER_BUFFER
     end_date            = Date.current.in_time_zone("America/New_York").to_date
 
-    @provider.expects(:fetch_security_prices)
+    @security_provider.expects(:fetch_security_prices)
              .with(symbol: security.ticker,
                    exchange_operating_mic: security.exchange_operating_mic,
                    start_date: expected_start_date,
@@ -71,12 +76,12 @@ class MarketDataImporterTest < ActiveSupport::TestCase
                               currency: "USD")
              ]))
 
-    @provider.stubs(:fetch_security_info)
+    @security_provider.stubs(:fetch_security_info)
              .with(symbol: "AAPL", exchange_operating_mic: "XNAS")
              .returns(provider_success_response(OpenStruct.new(name: "Apple", logo_url: "logo")))
 
-    # Ignore exchange rate calls for this test
-    @provider.stubs(:fetch_exchange_rates).returns(provider_success_response([]))
+    # Ignore exchange rate call for this test
+    @exchange_rate_provider.stubs(:fetch_exchange_rates).returns(provider_success_response([]))
 
     MarketDataImporter.new(mode: :snapshot).import_security_prices
 

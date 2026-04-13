@@ -49,9 +49,10 @@ class Provider::Opencode < Provider
         session["id"]
       end
 
+      parsed_model = parse_model(model)
       raw_response = client.send_message(session_id,
         content: prompt,
-        model: parse_model(model),
+        model: parsed_model,
         system: instructions
       )
 
@@ -67,6 +68,12 @@ class Provider::Opencode < Provider
 
       parsed
     end
+  rescue Provider::Opencode::Client::InvalidResponseError, Provider::Opencode::ChatResponseParser::InvalidResponseError => e
+    raise Error.new("OpenCode API response error: #{e.message}", details: {
+      session_id: session_id,
+      model: model,
+      error_type: e.class.name
+    })
   end
 
   def suggest_merchant(raw_name:, normalized_name:, user_merchants:)

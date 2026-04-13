@@ -4,6 +4,8 @@ class Provider::Opencode::Client
     "Accept" => "application/json"
   }.freeze
 
+  class InvalidResponseError < StandardError; end
+
   def initialize(base_url:, password: nil, username: "opencode")
     @connection = Faraday.new(url: base_url) do |f|
       f.request :json
@@ -25,7 +27,7 @@ class Provider::Opencode::Client
 
   def send_message(session_id, content:, model: nil, format: nil, system: nil, tools: nil)
     body = {
-      parts: [{ type: "text", text: content }]
+      parts: [ { type: "text", text: content } ]
     }
     body[:model] = model if model.present?
     body[:format] = format if format.present?
@@ -33,12 +35,18 @@ class Provider::Opencode::Client
     body[:tools] = tools if tools.present?
 
     response = connection.post("/session/#{session_id}/message", body)
-    response.body
+    body = response.body
+
+    unless body.is_a?(Hash)
+      raise InvalidResponseError, "OpenCode /session/#{session_id}/message returned invalid response: expected Hash, got #{body.class}. Status: #{response.status}. Model: #{model.inspect}"
+    end
+
+    body
   end
 
   def send_message_async(session_id, content:, model: nil, format: nil, system: nil)
     body = {
-      parts: [{ type: "text", text: content }]
+      parts: [ { type: "text", text: content } ]
     }
     body[:model] = model if model.present?
     body[:format] = format if format.present?
