@@ -10,7 +10,7 @@ class IncomeStatement
   end
 
   def totals(transactions_scope: nil)
-    transactions_scope ||= family.transactions.visible
+    transactions_scope ||= base_transactions_scope
 
     result = totals_query(transactions_scope: transactions_scope)
 
@@ -62,7 +62,7 @@ class IncomeStatement
     end
 
     def build_period_total(classification:, period:)
-      totals = totals_query(transactions_scope: family.transactions.visible.in_period(period)).select { |t| t.classification == classification }
+      totals = totals_query(transactions_scope: base_transactions_scope(period: period)).select { |t| t.classification == classification }
       classification_total = totals.sum(&:total)
 
       uncategorized_category = family.categories.uncategorized
@@ -122,5 +122,18 @@ class IncomeStatement
 
     def monetizable_currency
       family.currency
+    end
+
+    def base_transactions_scope(period: nil)
+      scope = Transaction
+        .joins("INNER JOIN entries ON entries.entryable_id = transactions.id::varchar AND entries.entryable_type = 'Transaction'")
+        .joins("INNER JOIN accounts ON entries.account_id = accounts.id")
+        .where(accounts: { family_id: family.id, status: [ "draft", "active" ] })
+
+      if period.present?
+        scope = scope.where(entries: { date: period.start_date..period.end_date })
+      end
+
+      scope
     end
 end
